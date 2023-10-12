@@ -38,6 +38,8 @@
     "neilbrayfield.php-docblocker",
     "kaiwood.insert-cursor-at-beginning-of-each-line-selected",
     "mykhailokushnir.vscode-php-getter-setter",
-    "syler.sass-indented"
+    "syler.sass-indented",
+    "cweijan.vscode-database-client2",
+    "ms-azuretools.vscode-docker"
   ]
 }

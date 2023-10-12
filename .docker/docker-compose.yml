@@ -48,6 +48,9 @@ services:
              - ../:/var/www/symfony/assets
         networks:
             - symfony_app
+    mailer:
+        image: schickling/mailcatcher
+        ports: ["1025", "1080"]
 
 volumes:
     symfony_app_var:
