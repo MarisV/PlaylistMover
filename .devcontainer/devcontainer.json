@@ -40,6 +40,7 @@
     "mykhailokushnir.vscode-php-getter-setter",
     "syler.sass-indented",
     "cweijan.vscode-database-client2",
-    "ms-azuretools.vscode-docker"
+    "ms-azuretools.vscode-docker",
+    "whatwedo.twig"
   ]
 }
