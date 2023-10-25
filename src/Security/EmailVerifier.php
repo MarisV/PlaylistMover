@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security\Security;
+namespace App\Security;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
