@@ -5,13 +5,9 @@
 {% block body %}
 
 <div class="row">
-    <div class="col">Your controller at  </div>
-    <div class="col"> <code><a href="{{ '/var/www/symfony/src/Controller/IndexController.php'|file_link(0) }}">src/Controller/IndexController.php</a></code> </div>
- </div>
-
-<div class="row">
-  <div class="col">Your template at </div>
-  <div class="col"><code><a href="{{ '/var/www/symfony/templates/index/index.html.twig'|file_link(0) }}">templates/index/index.html.twig</a></code> </div>
+  {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+   <h3> Hello {{ app.user.username }} </h3>
+  {% endif %}
  </div>
 
 {% endblock %}

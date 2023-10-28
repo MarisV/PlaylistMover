@@ -1,7 +1,6 @@
     <header>
-      <!-- Fixed navbar -->
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="#">Playlist Mover</a>
+        <a class="navbar-brand" href="#"  style="margin-left: 10px;">Playlist Mover</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -10,9 +9,26 @@
             <li class="nav-item active">
               <a class="nav-link" href="{{url('app_index')}}">Home</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{url('app_register')}}">Register</a>
-            </li>
+          </ul>
+        </div>
+        <div  class="d-flex justify-content-end" style="margin-right: 40px">
+          <ul class="navbar-nav mr-sm-2">
+              {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> {{ app.user.username }}</a>
+                <div class="dropdown-menu" aria-labelledby="profileDropdown">
+                  <a class="dropdown-item" href="#">Profile</a>
+                  <a class="dropdown-item" href="{{url('app_logout')}}">Logout</a>
+                </div>
+             </li>
+            {% else %}
+             <li class="nav-item">
+                <a class="nav-link" href="{{url('app_register')}}">Register</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{url('app_login')}}">Login</a>
+              </li>
+            {% endif %}
           </ul>
         </div>
       </nav>
