@@ -15,7 +15,10 @@
           <ul class="navbar-nav mr-sm-2">
               {% if is_granted('IS_AUTHENTICATED_FULLY') %}
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> {{ app.user.username }}</a>
+                <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+                  <i class="bi bi-person-circle"></i>  
+                  {{ app.user.username }}
+                 </a>
                 <div class="dropdown-menu" aria-labelledby="profileDropdown">
                   <a class="dropdown-item" href="#">Profile</a>
                   <a class="dropdown-item" href="{{url('app_logout')}}">Logout</a>
