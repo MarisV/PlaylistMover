@@ -1,0 +1,29 @@
+section#login-section {
+  background-color: #fffefe;
+  .card {
+    border-radius: 1rem;
+  }
+
+  .google-login {
+    background-color: #dd4b39;
+    margin-bottom: 20px;
+  }
+
+  .facebook-login {
+    background-color: #3b5998;
+  }
+
+  button {
+     width: 420px;
+     border: 0px;
+  }
+}
+
+section.registration-form {
+    span.validation-error {
+      width: 100%;
+      margin-top: 0.25rem;
+      font-size: 95%;
+      color: #dc3545;
+    }
+}
