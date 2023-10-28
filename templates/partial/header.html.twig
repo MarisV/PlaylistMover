@@ -21,15 +21,15 @@
                  </a>
                 <div class="dropdown-menu" aria-labelledby="profileDropdown">
                   <a class="dropdown-item" href="#">Profile</a>
-                  <a class="dropdown-item" href="{{url('app_logout')}}">Logout</a>
+                  <a class="dropdown-item" href="{{path('app_logout')}}">Logout</a>
                 </div>
              </li>
             {% else %}
              <li class="nav-item">
-                <a class="nav-link" href="{{url('app_register')}}">Register</a>
+                <a class="nav-link" href="{{path('app_register')}}">Register</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{{url('app_login')}}">Login</a>
+                <a class="nav-link" href="{{path('app_login')}}">Login</a>
               </li>
             {% endif %}
           </ul>

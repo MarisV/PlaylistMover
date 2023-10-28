@@ -40,8 +40,9 @@
             </form>
             <hr class="my-4">
 
-            <button class="btn btn-lg btn-block btn-primary google-login"
-              type="submit"><i class="bi bi-google"></i> Sign in with google</button>
+            <a href="{{ path('hwi_oauth_service_redirect', {'service': 'google' }) }}" class="btn btn-lg btn-block btn-primary google-login">
+              <i class="bi bi-google"></i> Sign in with google
+            </a>
             <button class="btn btn-lg btn-block btn-primary mb-2"
               type="submit"><i class="bi bi-facebook"></i> Sign in with facebook</button>
           </div>
