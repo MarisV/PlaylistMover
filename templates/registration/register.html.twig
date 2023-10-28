@@ -9,15 +9,59 @@
 
     <h1>Register</h1>
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.name) }}
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+{{ form_start(registrationForm) }}
+  <section class="registration-form">
+    <div class="container">
+      <div class="row justify-content-center">
+          <div class="row align-items-center">
+            <div class="col mt-4">
+              <input type="text" name="{{ field_name(registrationForm.name)}}" class="form-control" placeholder="{{ field_label(registrationForm.name)}}">
+              <span class="validation-error">
+                {{ form_errors(registrationForm.name) }}
+              </span>
+            </div>
+          </div>
+          <div class="row align-items-center mt-4">
+            <div class="col">
+              <input type="text" name="{{ field_name(registrationForm.username) }}" class="form-control" placeholder="{{ field_label(registrationForm.username) }}" >
+              <span class="validation-error">
+                {{ form_errors(registrationForm.username) }}
+              </span>
+            </div>
+          </div>
+           <div class="row align-items-center mt-4">
+            <div class="col">
+              <input type="email" name="{{ field_name(registrationForm.email) }}" class="form-control" placeholder="{{ field_label(registrationForm.email) }}" >
+               <span class="validation-error">
+                {{ form_errors(registrationForm.email) }}
+              </span>
+            </div>
+          </div>
+           <div class="row align-items-center mt-4">
+            <div class="col">
+              <input type="password" name="{{ field_name(registrationForm.plainPassword) }}" class="form-control" placeholder="{{ field_label(registrationForm.plainPassword) }}" >
+               <span class="validation-error">
+                {{ form_errors(registrationForm.plainPassword) }}
+              </span>
+            </div>
+          </div>
+          <div class="row justify-content-start mt-4">
+            <div class="col">
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input type="checkbox" class="form-check-input" name="{{ field_name(registrationForm.agreeTerms) }}">
+                  I Read and Accept <a href="#">Terms and Conditions</a>
+                </label>
+              </div>
+              <button class="btn btn-primary mt-4">Register</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{{ form_end(registrationForm) }}
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+
+
 {% endblock %}
