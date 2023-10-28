@@ -5,15 +5,13 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Polyfill\Intl\Icu\Exception\NotImplementedException;
 
-class IndexController extends AbstractController
+class LogoutController extends AbstractController
 {
-    #[Route('/', name: 'app_index')]
+    #[Route('/logout', name: 'app_logout')]
     public function index(): Response
     {
-        return $this->render('index/index.html.twig', [
-            'controller_name' => 'IndexController',
-            'user' => $this->getUser(),
-        ]);
+        throw new NotImplementedException('Pass');
     }
 }
