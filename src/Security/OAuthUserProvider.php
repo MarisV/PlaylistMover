@@ -28,7 +28,7 @@ class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProv
         $this->updateUserByOAuthUserResponse($user, $response);
     }
 
-    public function loadUserByOAuthUserResponse(UserResponseInterface $response)
+    public function loadUserByOAuthUserResponse(UserResponseInterface $response): UserInterface
     {
 
         $oauth = $this->userAuthRepository->findOneBy([
@@ -53,7 +53,7 @@ class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProv
 
     }
 
-    private function createUserByOAuthUserResponse(UserResponseInterface $response): User
+    private function createUserByOAuthUserResponse(UserResponseInterface $response): UserInterface
     {
         $user = new User();
         // dd($response);
@@ -65,7 +65,7 @@ class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProv
     }
 
 
-    private function updateUserByOAuthUserResponse(UserInterface $user, UserResponseInterface $response): User
+    private function updateUserByOAuthUserResponse(UserInterface $user, UserResponseInterface $response): UserInterface
     {
         /** @var User $user */
 
