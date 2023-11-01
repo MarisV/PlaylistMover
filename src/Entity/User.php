@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -17,9 +19,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\Column(length: 180, unique: true)]
-    private ?string $username = null;
 
     #[ORM\Column]
     private array $roles = [];
@@ -39,21 +38,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserOAuth::class)]
+    private Collection $userOAuths;
+
+    public function __construct()
+    {
+        $this->userOAuths = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUsername(): ?string
-    {
-        return $this->username;
-    }
-
-    public function setUsername(string $username): self
-    {
-        $this->username = $username;
-
-        return $this;
     }
 
     /**
@@ -63,7 +58,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return (string) $this->name;
     }
 
     /**
@@ -141,6 +136,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserOAuth>
+     */
+    public function getUserOAuths(): Collection
+    {
+        return $this->userOAuths;
+    }
+
+    public function addUserOAuth(UserOAuth $userOAuth): static
+    {
+        if (!$this->userOAuths->contains($userOAuth)) {
+            $this->userOAuths->add($userOAuth);
+            $userOAuth->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserOAuth(UserOAuth $userOAuth): static
+    {
+        if ($this->userOAuths->removeElement($userOAuth)) {
+            // set the owning side to null (unless already changed)
+            if ($userOAuth->getUser() === $this) {
+                $userOAuth->setUser(null);
+            }
+        }
 
         return $this;
     }
