@@ -55,11 +55,10 @@ class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProv
 
     private function createUserByOAuthUserResponse(UserResponseInterface $response): User
     {
-
         $user = new User();
-
-
+        // dd($response);
         $user->setEmail($response->getEmail());
+        $user->setName($response->getFirstName());
         $user->setPassword(substr(sha1($response->getAccessToken()), 0, 20));
 
         return $this->updateUserByOAuthUserResponse($user, $response);
