@@ -63,8 +63,9 @@ body {
     
       &-subtitle {
         font-family: $settings-main-font;
-        font-size: 24px;
+        font-size: 16;
         font-weight: $settings-title-font-weight;
+        color: rgba(0,0,0,.6);
       }
 
       &_new-connection {
