@@ -1,0 +1,97 @@
+@import "variables";
+
+body {
+  background-image: $settings-background
+}
+
+.settings-wrapper {
+  background-color: white;
+  margin-top: 50px;
+  border-radius: 25px;
+  padding: 20px;
+  min-height: 1000px;
+  padding-left: 0;
+  padding-right: 0;
+
+
+  &__title {
+    font-size: $settings-title-font-size;
+    font-weight: $settings-title-font-weight;
+    font-family: $settings-main-font;
+    line-height: 47px;
+    color: #000;
+    background-color: white;
+    margin-bottom: 40px;
+    margin-top: 25px;
+    padding-left: 45px;
+  }
+
+  &__navigation-tabs {
+    background-color: #eaeaea;
+    height: 70px;
+    width: 100%;
+    padding-left: 30px;
+    padding-top: 10px;
+
+    &-items {
+      margin-top: 4px;
+      li {
+        background-color: inherit;
+        border: 0;
+        
+        a {
+          text-decoration: none;
+          display: inline-block;
+          font-weight: bold;
+          color: rgba(0,0,0,.6);
+        }
+        a:active {
+          background: $settings-main-gradient-color;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-shadow: 0 0 transparent;
+        }
+
+      }
+    }
+
+  }
+
+  &__main-content {
+    color: #000;
+    padding-left: 45px;
+    padding-top: 30px;
+    
+      &-subtitle {
+        font-family: $settings-main-font;
+        font-size: 16px;
+        font-weight: $settings-title-font-weight;
+        color: rgba(0,0,0,.6);
+      }
+
+      &_new-connection {
+        
+        margin-left: 50%;
+        
+        .btn {
+          border-radius: 500px;
+          background: $settings-main-gradient-color;
+          color: white;
+          font-size: 15px;
+          font-weight: $settings-title-font-weight;
+        }
+
+        .btn:active {
+          color: white;
+        }
+
+        // .btn:hover {
+        //   background: $settings-main-btn-color-hover;
+        // }
+
+
+       
+      }
+  }
+
+}
