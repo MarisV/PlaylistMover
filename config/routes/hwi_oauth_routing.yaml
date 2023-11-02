@@ -11,4 +11,4 @@ hwi_oauth_login:
     prefix:   /login
 
 google_login:
-    path: /login/social/check-google
+    path: /login/check-google

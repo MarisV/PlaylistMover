@@ -9,11 +9,21 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
-    enable_authenticator_manager: true
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        # social:
+        #     pattern: ^/login/check-(google|facebook)
+        #     oauth:
+        #         resource_owners:
+        #             google:             "/login/check-google"
+        #         check_path: /login/check-google
+        #         login_path:   /login-check-google
+        #         use_forward:  false
+        #         failure_path: /login
+        #         oauth_user_provider:
+        #             service: App\Security\OAuthUserProvider
         main:
             pattern: ^/
             form_login:
@@ -25,15 +35,7 @@ security:
             remember_me:
                 secret:   '%kernel.secret%'
                 lifetime: 604800 
-        social:
-            oauth:
-                resource_owners:
-                    google:             "/login/social/check-google"
-                login_path:   /login
-                use_forward:  false
-                failure_path: /login
-                oauth_user_provider:
-                    service: App\Security\OAuthUserProvider
+        
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
