@@ -54,13 +54,41 @@ body {
       }
     }
 
-
   }
 
   &__main-content {
     color: #000;
-    padding-left: 30px;
-    padding-top: 10px;
+    padding-left: 45px;
+    padding-top: 30px;
+    
+      &-subtitle {
+        font-family: $settings-main-font;
+        font-size: 24px;
+        font-weight: $settings-title-font-weight;
+      }
+
+      &_new-connection {
+        
+        margin-left: 50%;
+        
+        .btn {
+          border-radius: 500px;
+          background: $settings-main-gradient-color;
+          color: white;
+          font-weight: $settings-title-font-weight;
+        }
+
+        .btn:active {
+         color: white;
+        }
+
+        // .btn:hover {
+        //   background: $settings-main-btn-color-hover;
+        // }
+
+
+       
+      }
   }
 
 }

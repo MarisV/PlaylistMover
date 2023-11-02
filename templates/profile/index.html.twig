@@ -4,14 +4,22 @@
 
 {% block body %}
   <div class="row"> 
-
     <div class="col settings-wrapper"> 
       <div class="settings-wrapper__title"> 
         Hi, {{ app.user.name }}!      
       </div>
        {% include('/profile/partial/navigation-tabs.html.twig') %}
       <div class="settings-wrapper__main-content">
-        456
+        
+        <div class="row"> 
+          <div class="col settings-wrapper__main-content-subtitle"> 
+              Connections
+          </div>
+          <div class="col settings-wrapper__main-content_new-connection">
+            <button class="btn btn-default">New connection</button>
+          </div>
+        </div>
+
       </div>
     </div>
   
