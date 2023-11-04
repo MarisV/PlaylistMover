@@ -11,6 +11,18 @@ class ProfileController extends AbstractController
     #[Route('/profile', name: 'app_profile')]
     public function index(): Response
     {
-        return $this->render('profile/index.html.twig');
+        return $this->render('profile/index.html.twig', [
+            'tab' => 'index'
+        ]);
     }
+
+    // #[Route('/profile/connections', name: 'app_profile_connections')]
+    // public function connections(): Response
+    // {
+    //     return $this->render('profile/index.html.twig', [
+    //         'tab' => 'connections'
+    //     ]);
+    // }
 }
+
+// 

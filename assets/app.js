@@ -8,9 +8,12 @@
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
 import './styles/login.scss';
-import 'jquery';
+import './styles/profile.scss'
+
+
 import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.bundle.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-import './styles/profile.scss'
+
+import 'bootstrap/dist/js/bootstrap';
+import 'jquery';
