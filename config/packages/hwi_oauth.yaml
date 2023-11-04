@@ -12,6 +12,7 @@ hwi_oauth:
             options:
                 display: popup
                 csrf: true
+                refresh_on_expire: true
         spotify:
             type:                spotify
             client_id:           594a17a7f37e430c851d862dcf5cf76e
@@ -19,4 +20,5 @@ hwi_oauth:
             scope:               "user-read-email playlist-read-private playlist-modify-private playlist-modify-public" 
             options:
                 csrf: true
+                refresh_on_expire: true
         
