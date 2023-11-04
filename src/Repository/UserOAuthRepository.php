@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\UserOAuth;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<UserOAuth>
@@ -21,28 +22,17 @@ class UserOAuthRepository extends ServiceEntityRepository
         parent::__construct($registry, UserOAuth::class);
     }
 
-//    /**
-//     * @return UserOAuth[] Returns an array of UserOAuth objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?UserOAuth
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+   /**
+    * @return UserOAuth[] Returns an array of UserOAuth objects
+    */
+   public function findByUser(UserInterface $user): array
+   {
+       return $this->createQueryBuilder('u')
+           ->andWhere('u.user = :user')
+           ->setParameter('user', $user)
+           ->orderBy('u.id', 'ASC')
+           ->getQuery()
+           ->getResult()
+       ;
+   }
 }
