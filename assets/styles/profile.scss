@@ -64,9 +64,9 @@ body {
     
       &-subtitle {
         font-family: $settings-main-font;
-        font-size: 16px;
+        font-size: 24px;
         font-weight: $settings-title-font-weight;
-        color: rgba(0,0,0,.6);
+        color: black;
       }
 
       &_new-connection {
@@ -88,10 +88,59 @@ body {
         // .btn:hover {
         //   background: $settings-main-btn-color-hover;
         // }
-
-
+  
        
       }
+      
+
+            
+      .connection {
+        color: $reg-text-color;
+        font-family:  $settings-main-font;
+        font-size: 18px;
+
+        display: flex;
+        float: left;
+        clear: both;
+        flex: 1 1;
+        align-items: center;
+
+        .icon {
+          width: 35px;
+          height: 35px;
+          margin-right: 20px;
+        }
+      }
+  }
+
+}
+
+.new-connection-modal {
+  .modal-content {
+    background-image: $settings-background;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    .row {
+      margin-bottom: 30px;
+    }
+  }
+  .connection-item {
+    background:-webkit-linear-gradient(left,#5458cd,#734acb);
+    color: white;
+    width: 147.2px;
+    height: 147px;
+    border-radius: $settings-music-block-radius;
+    box-shadow: 0 0 4px rgba(0,0,0,.1), 0 4px 8px rgba(0,0,0,.1);
+  }
+
+  i {
+    font-size: 50px;
+  }
+  
+  span {
+    font-family: $settings-main-font;
+    font-size: 16px;
+    font-weight: 400;
   }
 
 }

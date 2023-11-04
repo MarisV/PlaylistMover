@@ -10,5 +10,8 @@ hwi_oauth_login:
     resource: "@HWIOAuthBundle/Resources/config/routing/login.xml"
     prefix:   /login
 
-google_login:
+youtube_login:
     path: /login/check-google
+
+spotify_login:
+    path: '/login/check-spotify'

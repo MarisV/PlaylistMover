@@ -4,7 +4,7 @@ hwi_oauth:
 
     # https://github.com/hwi/HWIOAuthBundle/blob/master/Resources/doc/2-configuring_resource_owners.md
     resource_owners:
-        google:
+        youtube:
             type:                google
             client_id:           '%env(GOOGLE_ID)%'
             client_secret:       '%env(GOOGLE_SECRET)%'
@@ -12,3 +12,14 @@ hwi_oauth:
             options:
                 display: popup
                 csrf: true
+                refresh_on_expire: true
+                access_type: offline
+        spotify:
+            type:                spotify
+            client_id:           '%env(SPOTIFY_ID)%'
+            client_secret:       '%env(SPOTIFY_SECRET)%'
+            scope:               "user-read-email playlist-read-private playlist-modify-private playlist-modify-public" 
+            options:
+                csrf: true
+                refresh_on_expire: true
+        

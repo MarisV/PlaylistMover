@@ -28,6 +28,9 @@ class UserOAuth
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $accessToken = null;
 
+    #[ORM\Column(name: 'username', type: 'string', nullable: true)]
+    private ?string $username;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -96,6 +99,30 @@ class UserOAuth
     public function setAccessToken(?string $accessToken): static
     {
         $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of username
+     *
+     * @return ?string
+     */
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    /**
+     * Set the value of username
+     *
+     * @param ?string $username
+     *
+     * @return self
+     */
+    public function setUsername(?string $username): self
+    {
+        $this->username = $username;
 
         return $this;
     }

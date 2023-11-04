@@ -11,17 +11,31 @@
        {% include('/profile/partial/navigation-tabs.html.twig') %}
       <div class="settings-wrapper__main-content">
         
-        <div class="row"> 
+        <div class="row mb-5"> 
           <div class="col settings-wrapper__main-content-subtitle"> 
               Connections
           </div>
           <div class="col settings-wrapper__main-content_new-connection">
-            <a class="btn btn-default" href="#">New connection</button>
+            <a class="btn btn-default" id="connections-modal" href="#" data-bs-toggle="modal" data-bs-target=".new-connection-modal">New connection</a>
           </div>
         </div>
 
+        {% for connection in connections %}
+        {% set iconPath = '/images/icons/' ~ connection.provider ~ '.svg' %}
+          <div class="row mb-4">
+            <div class="col connection">
+              <img class="icon" src="{{ asset(iconPath) }}"></im>
+              <div>
+                {{ connection.provider|capitalize  }}  - {{ connection.identifier }}
+              </div>
+             
+            </div>
+          </div>
+         {% endfor %}
       </div>
     </div>
-  
   </div>
+
+  {{ include('/profile/partial/connections-modal.html.twig') }}
+
 {% endblock %}

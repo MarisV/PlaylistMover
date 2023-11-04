@@ -2,6 +2,7 @@
 
 namespace App\Controller\UserProfile;
 
+use App\Repository\UserOAuthRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -9,8 +10,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProfileController extends AbstractController
 {
     #[Route('/profile', name: 'app_profile')]
-    public function index(): Response
+    public function index(UserOAuthRepository $userOAuthRepository): Response
     {
-        return $this->render('profile/index.html.twig');
+        return $this->render('profile/index.html.twig', [
+            'tab' => 'index',
+            'connections' => $userOAuthRepository->findByUser($this->getUser()),
+        ]);
     }
 }
+// 

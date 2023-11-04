@@ -158,7 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeUserOAuth(UserOAuth $userOAuth): static
+    public function removeUserOAuth(UserOAuth $userOAuth): self
     {
         if ($this->userOAuths->removeElement($userOAuth)) {
             // set the owning side to null (unless already changed)
