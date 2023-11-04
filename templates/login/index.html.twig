@@ -5,9 +5,9 @@
 {% block body %}
 
 
-      {% if error %}
-        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-      {% endif %}
+{% if error %}
+  <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+{% endif %}
 
   <section class="vh-100" id="login-section">
   <div class="container py-5 h-100">
@@ -48,11 +48,5 @@
     </div>
   </div>
 </section>
-
-
-
-
-
-
 
 {% endblock %}
