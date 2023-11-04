@@ -24,6 +24,7 @@ security:
                 failure_path: /login/
                 oauth_user_provider:
                     service: App\Security\OAuthUserProvider
+                default_target_path: app_profile
             form_login:
                 login_path: app_login
                 check_path: app_login
