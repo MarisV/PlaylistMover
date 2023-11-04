@@ -12,3 +12,6 @@ hwi_oauth_login:
 
 google_login:
     path: /login/check-google
+
+spotify-login:
+    path: '/login/check-spotify'
