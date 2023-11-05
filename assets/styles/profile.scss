@@ -91,8 +91,6 @@ body {
   
        
       }
-      
-
             
       .connection {
         color: $reg-text-color;
@@ -115,7 +113,7 @@ body {
 
 }
 
-.new-connection-modal {
+.new-connection-modal, .new-transfer-modal {
   .modal-content {
     background-image: $settings-background;
     padding-top: 40px;

@@ -169,4 +169,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getUserOAuthByProviderKey(string $provider): ?UserOAuth
+    {
+        return $this->getUserOAuths()->filter(function(UserOAuth $auth) use ($provider) {
+            return $auth->getProvider() === $provider;
+        })->first();
+    }
 }

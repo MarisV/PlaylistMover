@@ -1,9 +1,16 @@
 {% extends 'profile/partial/profile-base.html.twig' %}
 
 {% block main_content %}
-    <div class="row"> 
-        <div class="col"> 
-            <h4> My transfers </h4>
+      <div class="row mb-5"> 
+        <div class="col settings-wrapper__main-content-subtitle"> 
+            My transfers
         </div>
-    </div>
+        <div class="col settings-wrapper__main-content_new-connection">
+          <a class="btn btn-default" id="connections-modal" href="#" data-bs-toggle="modal" data-bs-target=".new-transfer-modal">New transfer</a>
+        </div>
+      </div>
+
+  {{ include('/profile/partial/new-transfer-modal.html.twig') }}
+
+
 {% endblock %}
