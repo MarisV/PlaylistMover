@@ -32,7 +32,11 @@ class TransferController extends AbstractController
     #[Route('/fetch', name: 'fetch_playlists')]
     public function fetchPlaylists()
     {
-        $response = $this->spotifyPlaylistsFetcher->fetch();
+        //@todo: Use factory/builder/etc. pattern depending on `type`
+        //pass `type` by route
+        $response = $this->spotifyPlaylistsFetcher->fetchPlaylists();
+
+        dd($response);
 
         return new JsonResponse([
             'status' => 200,
