@@ -42,6 +42,8 @@ class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProv
 
         if ($oauth instanceof UserOAuth) {
 
+
+            
             $this->logger->info('AUTH Response receeived', [
                 $response->getUsername(),
                 $response->getNickname(),
@@ -55,8 +57,11 @@ class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProv
                 $response->getExpiresIn(),
                 $response->getOAuthToken(),
             ]);
-
-            return $oauth->getUser();
+            
+            $oauth
+                ->setAccessToken($response->getAccessToken())
+                ->setRefreshToken($response->getRefreshToken());
+            $this->em->flush();
         }
 
         if (null !== $response->getEmail()) {

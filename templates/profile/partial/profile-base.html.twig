@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile!{% endblock %}
+
+{% block body %}
+  <div class="row" style="max-width: 1200px"> 
+    <div class="col settings-wrapper"> 
+      <div class="settings-wrapper__title"> 
+        Hi, {{ app.user.name }}!      
+      </div>
+       {% include('/profile/partial/navigation-tabs.html.twig') %}
+      <div class="settings-wrapper__main-content">
+        
+        {% block main_content %}{% endblock %}
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -13,9 +13,8 @@ class ProfileController extends AbstractController
     public function index(UserOAuthRepository $userOAuthRepository): Response
     {
         return $this->render('profile/index.html.twig', [
-            'tab' => 'index',
+            'tab' => 'settings',
             'connections' => $userOAuthRepository->findByUser($this->getUser()),
         ]);
     }
 }
-// 
