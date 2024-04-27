@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
+#[UniqueEntity(fields: ['name'], message: 'There is already an account with this username')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -150,11 +150,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addUserOAuth(UserOAuth $userOAuth): static
     {
-        if (!$this->userOAuths->contains($userOAuth)) {
+        $create = false;
+
+        if ($this->userOAuths->count() === 0) {
+            $create = true;
+        } else {
+            $existingAuths = $this->userOAuths->filter(function (UserOAuth $auth) use ($userOAuth) {
+                return $auth->getProvider() === $userOAuth->getProvider();
+            })->count();
+
+            if ($existingAuths === 0) {
+                $create = true;
+            }
+        }
+
+        if ($create) {
             $this->userOAuths->add($userOAuth);
             $userOAuth->setUser($this);
         }
-
         return $this;
     }
 

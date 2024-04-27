@@ -12,17 +12,13 @@ use HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface;
 use App\Entity\UserOAuth;
 use App\Entity\User;
 use Exception;
-use Psr\Log\LoggerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 
-class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProviderInterface
+readonly class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProviderInterface
 {
     public function __construct(
         private UserRepository         $userRepository,
         private UserOAuthRepository    $userAuthRepository,
         private EntityManagerInterface $em,
-        private LoggerInterface $logger,
-        private Security $security,
     ) {
 
     }
@@ -34,30 +30,12 @@ class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProv
 
     public function loadUserByOAuthUserResponse(UserResponseInterface $response): UserInterface
     {
-
         $oauth = $this->userAuthRepository->findOneBy([
             'provider' => $response->getResourceOwner()->getName(),
             'identifier' => $response->getEmail(),
         ]);
 
         if ($oauth instanceof UserOAuth) {
-
-
-            
-            $this->logger->info('AUTH Response receeived', [
-                $response->getUsername(),
-                $response->getNickname(),
-                $response->getFirstName(),
-                $response->getLastName(),
-                $response->getRealName(),
-                $response->getEmail(),
-                $response->getAccessToken(),
-                $response->getRefreshToken(),
-                $response->getTokenSecret(),
-                $response->getExpiresIn(),
-                $response->getOAuthToken(),
-            ]);
-            
             $oauth
                 ->setAccessToken($response->getAccessToken())
                 ->setRefreshToken($response->getRefreshToken());
@@ -65,12 +43,12 @@ class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProv
         }
 
         if (null !== $response->getEmail()) {
-            $user = $this->userRepository->findOneByEmail($response->getEmail());
+            $user = $this->userRepository->findOneByEmail($response->getEmail()); // todo: can search user by oauth properties in case multiple oAuths have different emails
             if (null !== $user) {
-                return $this->updateUserByOAuthUserResponse($user, $response);
+                return $user;
+            } else {
+                return $this->createUserByOAuthUserResponse($response);
             }
-
-            return $this->createUserByOAuthUserResponse($response);
         }
 
         throw new Exception('Email is null or not provided');
@@ -79,17 +57,35 @@ class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProv
 
     private function createUserByOAuthUserResponse(UserResponseInterface $response): UserInterface
     {
-         /** @var User $user */
-        $user = $this->security->getUser();
-        
-        return $this->updateUserByOAuthUserResponse($user, $response);
+        $newUser = (new User())
+            ->setEmail($response->getEmail())
+            ->setName($response->getNickname())
+            ->setPassword(md5($response->getEmail()));
+
+        $this->em->persist($newUser);
+
+        $newUser->addUserOAuth($this->createOauthEntry($response));
+
+        $this->em->flush();
+
+        return $newUser;
     }
 
 
     private function updateUserByOAuthUserResponse(UserInterface $user, UserResponseInterface $response): UserInterface
     {
         /** @var User $user */
+        $oauth = $this->createOauthEntry($response);
 
+        $user->addUserOAuth($oauth);
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return $user;
+    }
+
+    private function createOauthEntry(UserResponseInterface $response): UserOAuth
+    {
         $oauth = new UserOAuth();
         $oauth->setIdentifier($response->getEmail());
         $oauth->setProvider($response->getResourceOwner()->getName());
@@ -97,11 +93,8 @@ class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProv
         $oauth->setRefreshToken($response->getRefreshToken());
         $oauth->setUsername($response->getUsername());
 
-        $user->addUserOAuth($oauth);
-        $this->em->persist($user);
         $this->em->persist($oauth);
-        $this->em->flush();
 
-        return $user;
+        return $oauth;
     }
 }
