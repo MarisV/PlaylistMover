@@ -45,7 +45,7 @@ readonly class OAuthUserProvider implements AccountConnectorInterface, OAuthAwar
         if (null !== $response->getEmail()) {
             $user = $this->userRepository->findOneByEmail($response->getEmail()); // todo: can search user by oauth properties in case multiple oAuths have different emails
             if (null !== $user) {
-                return $this->updateUserByOAuthUserResponse($user, $response);
+                return $user;
             } else {
                 return $this->createUserByOAuthUserResponse($response);
             }
