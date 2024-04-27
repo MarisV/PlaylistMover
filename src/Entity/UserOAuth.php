@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use App\Repository\UserOAuthRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: UserOAuthRepository::class)]
 class UserOAuth
 {
+    use TimestampableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
