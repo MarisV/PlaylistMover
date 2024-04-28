@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\UserOAuthRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use HWI\Bundle\OAuthBundle\OAuth\ResponseInterface;
 
 #[ORM\Entity(repositoryClass: UserOAuthRepository::class)]
 class UserOAuth
@@ -33,6 +35,18 @@ class UserOAuth
 
     #[ORM\Column(name: 'username', type: 'string', nullable: true)]
     private ?string $username;
+
+    public static function fromOAuthResponse(ResponseInterface $response): UserOAuth
+    {
+        return (new self)
+            ->setIdentifier($response->getEmail())
+            ->setProvider($response->getResourceOwner()->getName())
+            ->setAccessToken($response->getAccessToken())
+            ->setRefreshToken($response->getRefreshToken())
+            ->setUsername($response->getUsername())
+            ->setCreatedAt(new DateTime())
+            ->setUpdatedAt(new DateTime());
+    }
 
     public function getId(): ?int
     {
