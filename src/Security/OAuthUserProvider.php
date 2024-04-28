@@ -1,7 +1,8 @@
-<?php 
+<?php
 
 namespace App\Security;
 
+use App\Security\Exception\ConnectionException;
 use HWI\Bundle\OAuthBundle\Security\Core\User\OAuthAwareUserProviderInterface;
 use HWI\Bundle\OAuthBundle\Connect\AccountConnectorInterface;
 use App\Repository\UserRepository;
@@ -12,7 +13,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface;
 use App\Entity\UserOAuth;
 use App\Entity\User;
-use Exception;
 
 readonly class OAuthUserProvider implements AccountConnectorInterface, OAuthAwareUserProviderInterface
 {
@@ -20,8 +20,9 @@ readonly class OAuthUserProvider implements AccountConnectorInterface, OAuthAwar
         private UserRepository         $userRepository,
         private UserOAuthRepository    $userAuthRepository,
         private EntityManagerInterface $em,
-    ) {
-
+        private Security               $security,
+    )
+    {
     }
 
     public function connect(UserInterface $user, UserResponseInterface $response): void
@@ -31,6 +32,8 @@ readonly class OAuthUserProvider implements AccountConnectorInterface, OAuthAwar
 
     public function loadUserByOAuthUserResponse(UserResponseInterface $response): UserInterface
     {
+        /** @var User $currentUser */
+        $currentUser = $this->security->getUser();
 
         $oauth = $this->userAuthRepository->findOneBy([
             'provider' => $response->getResourceOwner()->getName(),
@@ -46,59 +49,48 @@ readonly class OAuthUserProvider implements AccountConnectorInterface, OAuthAwar
             return $oauth->getUser();
         }
 
-        if (null !== $response->getEmail()) {
-            $user = $this->userRepository->findOneByEmail($response->getEmail()); // todo: can search user by oauth properties in case multiple oAuths have different emails
-            if (null !== $user) {
-                return $user;
-            } else {
-                return $this->createUserByOAuthUserResponse($response);
+        if ($response->getEmail() !== null) {
+            if ($currentUser !== null) {
+                $connection = $currentUser->getUserOAuthByProviderKey($response->getResourceOwner()->getName());
+                if (!$connection) {
+                    return $this->updateUserByOAuthUserResponse($currentUser, $response);
+                }
             }
+
+            $user = $this->userRepository->findOneBy([
+                'email' => $response->getEmail()
+            ]);
+
+            return $user ?? $this->createUserByOAuthUserResponse($response);
         }
 
-        throw new Exception('Email is null or not provided');
-
+        throw new ConnectionException('Email is null or not provided');
     }
 
     private function createUserByOAuthUserResponse(UserResponseInterface $response): UserInterface
     {
-        $newUser = (new User())
-            ->setEmail($response->getEmail())
-            ->setName($response->getNickname())
-            ->setPassword(md5($response->getEmail()));
+        $user = User::fromOAuthResponse($response);
+        $oauth = UserOAuth::fromOAuthResponse($response);
 
-        $this->em->persist($newUser);
+        $user->addUserOAuth($oauth);
 
-        $newUser->addUserOAuth($this->createOauthEntry($response));
-
+        $this->em->persist($user);
+        $this->em->persist($oauth);
         $this->em->flush();
 
-        return $newUser;
+        return $user;
     }
 
 
     private function updateUserByOAuthUserResponse(UserInterface $user, UserResponseInterface $response): UserInterface
     {
         /** @var User $user */
-        $oauth = $this->createOauthEntry($response);
+        $oauth = UserOAuth::fromOAuthResponse($response);
 
         $user->addUserOAuth($oauth);
-        $this->em->persist($user);
+        $this->em->persist($oauth);
         $this->em->flush();
 
         return $user;
-    }
-
-    private function createOauthEntry(UserResponseInterface $response): UserOAuth
-    {
-        $oauth = new UserOAuth();
-        $oauth->setIdentifier($response->getEmail());
-        $oauth->setProvider($response->getResourceOwner()->getName());
-        $oauth->setAccessToken($response->getAccessToken());
-        $oauth->setRefreshToken($response->getRefreshToken());
-        $oauth->setUsername($response->getUsername());
-
-        $this->em->persist($oauth);
-
-        return $oauth;
     }
 }

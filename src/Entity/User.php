@@ -3,10 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -47,6 +49,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->userOAuths = new ArrayCollection();
+    }
+
+    public static function fromOAuthResponse(UserResponseInterface $response)
+    {
+        return (new self())
+            ->setEmail($response->getEmail())
+            ->setName($response->getNickname())
+            ->setPassword(md5($response->getEmail()))
+            ->setCreatedAt(new DateTime())
+            ->setUpdatedAt(new DateTime());
     }
 
     public function getId(): ?int
@@ -186,7 +198,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUserOAuthByProviderKey(string $provider): ?UserOAuth
+    public function getUserOAuthByProviderKey(string $provider): UserOAuth|false
     {
         return $this->getUserOAuths()->filter(function(UserOAuth $auth) use ($provider) {
             return $auth->getProvider() === $provider;
