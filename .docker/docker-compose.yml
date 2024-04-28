@@ -17,6 +17,8 @@ services:
         networks:
             - symfony_app
     php:
+        extra_hosts:
+            -   "host.docker.internal:host-gateway"
         build:
             context: ./php
             args:
