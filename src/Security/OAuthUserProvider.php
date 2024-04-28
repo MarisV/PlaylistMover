@@ -7,6 +7,7 @@ use HWI\Bundle\OAuthBundle\Connect\AccountConnectorInterface;
 use App\Repository\UserRepository;
 use App\Repository\UserOAuthRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface;
 use App\Entity\UserOAuth;
@@ -30,6 +31,7 @@ readonly class OAuthUserProvider implements AccountConnectorInterface, OAuthAwar
 
     public function loadUserByOAuthUserResponse(UserResponseInterface $response): UserInterface
     {
+
         $oauth = $this->userAuthRepository->findOneBy([
             'provider' => $response->getResourceOwner()->getName(),
             'identifier' => $response->getEmail(),
@@ -40,6 +42,8 @@ readonly class OAuthUserProvider implements AccountConnectorInterface, OAuthAwar
                 ->setAccessToken($response->getAccessToken())
                 ->setRefreshToken($response->getRefreshToken());
             $this->em->flush();
+
+            return $oauth->getUser();
         }
 
         if (null !== $response->getEmail()) {

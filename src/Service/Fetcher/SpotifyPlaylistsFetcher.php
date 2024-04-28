@@ -2,12 +2,13 @@
 
 namespace App\Service\Fetcher;
 
+use App\Service\Enums\Providers;
 use Exception;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class SpotifyPlaylistsFetcher extends AbstractPlaylistFetcher 
 {   
-    private const PROVIDER = 'spotify';
+    private const PROVIDER = Providers::SPOTIFY;
     private CONST LIMIT = 50;
 
     private const FETCH_URL = 'https://api.spotify.com/v1/users/:user_id/playlists?offset=0&limit=:limit';
@@ -58,7 +59,7 @@ class SpotifyPlaylistsFetcher extends AbstractPlaylistFetcher
 
     private function buildUrl(): string
     {
-        $auth = $this->user->getUserOAuthByProviderKey(self::PROVIDER);
+        $auth = $this->user->getUserOAuthByProviderKey(self::PROVIDER->value);
 
         return strtr(self::FETCH_URL, [
             ':user_id' => $auth->getUsername(),
@@ -74,7 +75,7 @@ class SpotifyPlaylistsFetcher extends AbstractPlaylistFetcher
                 $url,
                 [
                     'headers' => [
-                        'Authorization' => 'Bearer ' . $this->user->getUserOAuthByProviderKey(self::PROVIDER)->getAccessToken(),
+                        'Authorization' => 'Bearer ' . $this->user->getUserOAuthByProviderKey(self::PROVIDER->value)->getAccessToken(),
                     ],
                 ]
             );
