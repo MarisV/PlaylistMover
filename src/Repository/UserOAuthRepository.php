@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\UserOAuth;
+use App\Service\Enums\Providers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -35,4 +36,17 @@ class UserOAuthRepository extends ServiceEntityRepository
            ->getResult()
        ;
    }
+
+    public function findForTokenRefresh(Providers $provider)
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.createdAt <= :created')
+            ->andWhere('u.provider = :provider')
+            ->setParameters([
+                'created' => new \DateTime('-1 minutes'),
+                'provider' => $provider->value,
+            ])
+            ->getQuery()
+            ->getResult();
+    }
 }
