@@ -2,8 +2,8 @@
 
 namespace App\Controller\UserProfile;
 
-use App\Service\Fetcher\Interface\FetcherInterface;
-use App\Service\Fetcher\SpotifyPlaylistsFetcher;
+use App\Service\Enums\Providers;
+use App\Service\Fetcher\FetcherFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,13 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/profile/transfer', 'app_')]
 
 class TransferController extends AbstractController
-{   
+{
     public function __construct(
-        private FetcherInterface $fetcher,
-        private SpotifyPlaylistsFetcher $spotifyPlaylistsFetcher
-    ) {
-        
-    }
+    ) { }
 
     #[Route('/', name: 'transfer')]
     public function index(Request $request): Response
@@ -29,14 +25,12 @@ class TransferController extends AbstractController
         ]);
     }
 
-    #[Route('/fetch', name: 'fetch_playlists')]
-    public function fetchPlaylists()
+    #[Route('/fetch/{provider}', name: 'fetch_playlists')]
+    public function fetchPlaylists(Providers $provider, FetcherFactory $fetcherFactory): JsonResponse
     {
-        //@todo: Use factory/builder/etc. pattern depending on `type`
-        //pass `type` by route
-        $response = $this->spotifyPlaylistsFetcher->fetchPlaylists();
+        $fetcher = $fetcherFactory->factory($provider);
 
-        dd($response);
+        $response = $fetcher->fetchPlaylists();
 
         return new JsonResponse([
             'status' => 200,

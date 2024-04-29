@@ -10,10 +10,20 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            iterable $providers: !tagged_iterator fetcher_provider
 
-    App\Service\Fetcher\AbstractPlaylistFetcher:
+    App\Service\Fetcher\BaseFetcher:
         abstract:  true
-        arguments: ['@http_client']
+        arguments: ['@http_client', '@security.helper']
+
+    App\Service\Fetcher\SpotifyFetcher:
+        tags: ['spotify']
+        parent: App\Service\Fetcher\BaseFetcher
+
+    App\Service\Fetcher\YoutubeFetcher:
+        tags: ['youtube']
+        parent: App\Service\Fetcher\BaseFetcher
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

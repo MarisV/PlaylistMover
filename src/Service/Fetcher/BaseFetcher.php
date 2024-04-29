@@ -2,13 +2,12 @@
 
 namespace App\Service\Fetcher;
 
-use App\Service\Fetcher\Interface\FetcherInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-abstract class AbstractPlaylistFetcher implements FetcherInterface {
+abstract class BaseFetcher {
 
     protected UserInterface $user;
 
@@ -19,7 +18,7 @@ abstract class AbstractPlaylistFetcher implements FetcherInterface {
         $this->user = $security->getUser();
     }
 
-    protected function emptyResponse()
+    protected function emptyResponse(): JsonResponse
     {
         return new JsonResponse([
             'count' => 0,

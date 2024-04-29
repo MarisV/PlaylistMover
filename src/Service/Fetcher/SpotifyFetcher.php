@@ -3,19 +3,21 @@
 namespace App\Service\Fetcher;
 
 use App\Service\Enums\Providers;
-use Exception;
+use App\Service\Fetcher\Interface\FetcherInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class SpotifyPlaylistsFetcher extends AbstractPlaylistFetcher 
+#[AutoconfigureTag(name: "fetcher_provider")]
+class SpotifyFetcher extends BaseFetcher implements FetcherInterface
 {   
-    private const PROVIDER = Providers::SPOTIFY;
     private CONST LIMIT = 50;
-
     private const FETCH_URL = 'https://api.spotify.com/v1/users/:user_id/playlists?offset=0&limit=:limit';
 
-    final function fetchPlaylists()
-    {
+    public const NAME = Providers::SPOTIFY;
 
+    final function fetchPlaylists(): JsonResponse|array
+    {
         $items = [];
         $url = $this->buildUrl();
   
@@ -59,7 +61,7 @@ class SpotifyPlaylistsFetcher extends AbstractPlaylistFetcher
 
     private function buildUrl(): string
     {
-        $auth = $this->user->getUserOAuthByProviderKey(self::PROVIDER->value);
+        $auth = $this->user->getUserOAuthByProviderKey(self::NAME->value);
 
         return strtr(self::FETCH_URL, [
             ':user_id' => $auth->getUsername(),
@@ -75,7 +77,7 @@ class SpotifyPlaylistsFetcher extends AbstractPlaylistFetcher
                 $url,
                 [
                     'headers' => [
-                        'Authorization' => 'Bearer ' . $this->user->getUserOAuthByProviderKey(self::PROVIDER->value)->getAccessToken(),
+                        'Authorization' => 'Bearer ' . $this->user->getUserOAuthByProviderKey(self::NAME->value)->getAccessToken(),
                     ],
                 ]
             );
