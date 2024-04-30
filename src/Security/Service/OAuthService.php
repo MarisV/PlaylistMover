@@ -15,7 +15,7 @@ readonly class OAuthService
     public function __construct(
         private HttpClientInterface $httpClient,
         private EntityManagerInterface $entityManager,
-        private readonly ParameterBagInterface $secrets
+        private ParameterBagInterface $secrets
     ) {
         
     }

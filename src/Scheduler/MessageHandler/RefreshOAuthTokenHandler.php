@@ -9,20 +9,20 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-final class RefreshOAuthTokenHandler
+final readonly class RefreshOAuthTokenHandler
 {
-    public function __invoke(
-        RefreshOAuthToken $message,
-        UserOAuthRepository $userOAuthRepository,
-        OAuthService $oAuthService,
-        LoggerInterface $logger
-    ): void {
-        $oauths = $userOAuthRepository->findForTokenRefresh($message->provider);
+    public function __construct(
+        private UserOAuthRepository $userOAuthRepository,
+        private OAuthService        $oAuthService,
+        private LoggerInterface     $logger
+    ) {}
+
+    public function __invoke(RefreshOAuthToken $message): void {
+        $oauths = $this->userOAuthRepository->findForTokenRefresh($message->provider);
 
         foreach ($oauths as $oauth) {
-            $oAuthService->refreshSpotifyToken($oauth);
-            $logger->info(sprintf('Updated access-token: %s', $oauth));
+            $this->oAuthService->refreshSpotifyToken($oauth);
+            $this->logger->info(sprintf('Updated access-token: %s', $oauth));
         }
-
     }
 }

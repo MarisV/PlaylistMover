@@ -44,10 +44,10 @@ class UserOAuthRepository extends ServiceEntityRepository
     public function findForTokenRefresh(Providers $provider): array
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.createdAt <= :created')
+            ->andWhere('u.updatedAt <= :updated')
             ->andWhere('u.provider = :provider')
             ->setParameters([
-                'created' => new \DateTime('-1 minutes'),
+                'updated' => new \DateTime('-1 hour'),
                 'provider' => $provider->value,
             ])
             ->getQuery()
