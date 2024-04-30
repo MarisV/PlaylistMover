@@ -24,13 +24,13 @@ class UserOAuth
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $identifier = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 512, nullable: true)]
     private ?string $refreshToken = null;
 
     #[ORM\ManyToOne(inversedBy: 'userOAuths')]
     private ?User $user = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 512, nullable: true)]
     private ?string $accessToken = null;
 
     #[ORM\Column(name: 'username', type: 'string', nullable: true)]
