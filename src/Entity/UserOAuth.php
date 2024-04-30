@@ -48,6 +48,11 @@ class UserOAuth
             ->setUpdatedAt(new DateTime());
     }
 
+    public function __toString()
+    {
+        return sprintf('#%d| "%s" - %s - ',$this->id, $this->provider, $this->identifier);
+    }
+
     public function getId(): ?int
     {
         return $this->id;

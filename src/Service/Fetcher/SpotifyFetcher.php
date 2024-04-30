@@ -10,11 +10,13 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 #[AutoconfigureTag(name: "fetcher_provider")]
 class SpotifyFetcher extends BaseFetcher implements FetcherInterface
-{   
+{
+    public const NAME = Providers::SPOTIFY;
+
     private CONST LIMIT = 50;
     private const FETCH_URL = 'https://api.spotify.com/v1/users/:user_id/playlists?offset=0&limit=:limit';
+    public const TOKEN_REFRESH_URL = 'https://accounts.spotify.com/api/token';
 
-    public const NAME = Providers::SPOTIFY;
 
     final function fetchPlaylists(): JsonResponse|array
     {

@@ -37,7 +37,11 @@ class UserOAuthRepository extends ServiceEntityRepository
        ;
    }
 
-    public function findForTokenRefresh(Providers $provider)
+    /**
+     * @param Providers $provider
+     * @return UserOAuth[]
+     */
+    public function findForTokenRefresh(Providers $provider): array
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.createdAt <= :created')
