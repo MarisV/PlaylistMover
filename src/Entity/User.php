@@ -46,9 +46,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserOAuth::class)]
     private Collection $userOAuths;
 
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Playlist::class)]
+    private Collection $playlists;
+
     public function __construct()
     {
         $this->userOAuths = new ArrayCollection();
+        $this->playlists = new ArrayCollection();
     }
 
     public static function fromOAuthResponse(UserResponseInterface $response)
@@ -201,5 +205,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->getUserOAuths()->filter(function(UserOAuth $auth) use ($provider) {
             return $auth->getProvider() === $provider;
         })->first();
+    }
+
+    /**
+     * @return Collection<int, Playlist>
+     */
+    public function getPlaylists(): Collection
+    {
+        return $this->playlists;
+    }
+
+    public function addPlaylist(Playlist $playlist): static
+    {
+        if (!$this->playlists->contains($playlist)) {
+            $this->playlists->add($playlist);
+            $playlist->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlaylist(Playlist $playlist): static
+    {
+        if ($this->playlists->removeElement($playlist)) {
+            // set the owning side to null (unless already changed)
+            if ($playlist->getOwner() === $this) {
+                $playlist->setOwner(null);
+            }
+        }
+
+        return $this;
     }
 }
