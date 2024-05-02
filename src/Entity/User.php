@@ -56,9 +56,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (new self())
             ->setEmail($response->getEmail())
             ->setName($response->getNickname())
-            ->setPassword(md5($response->getEmail()))
-            ->setCreatedAt(new DateTime())
-            ->setUpdatedAt(new DateTime());
+            ->setPassword(md5($response->getEmail()));
     }
 
     public function getId(): ?int

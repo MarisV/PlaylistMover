@@ -6,5 +6,5 @@ interface FetcherInterface
 {
     public const NAME = '';
     public function fetchPlaylists();
-    public function fetchTracks();
+//    public function fetchTracks();
 }

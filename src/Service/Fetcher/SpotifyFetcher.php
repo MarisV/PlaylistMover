@@ -45,7 +45,12 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
             $playList['id'] = $item['id'];
             $playList['title'] = $item['name'];
             $playList['image'] = end($item['images'])['url'];
-            $playList['tracks'] = $item['tracks']['total'];
+            $playList['url'] = $item['uri'];
+            $playList['tracks'] = $this->fetchTracks($item['tracks']);
+//            $playList['tracks'] = [
+//                'href' => $item['tracks']['href'],
+//                'total' => $item['tracks']['total'],
+//            ];
 
             $data[] = $playList;
         }
@@ -57,8 +62,16 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
     }
 
 
-    public function fetchTracks()
+    public function fetchTracks(array $playListItem)
     {
+        $tracks = [];
+        if ($playListItem['total'] === 0) {
+            return $tracks;
+        }
+
+        $tracksResponse = $this->makeRequest($playListItem['href']);
+        $data = json_decode($tracksResponse->getContent());
+
     }
 
     private function buildUrl(): string

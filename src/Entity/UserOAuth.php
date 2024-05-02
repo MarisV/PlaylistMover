@@ -43,9 +43,7 @@ class UserOAuth
             ->setProvider($response->getResourceOwner()->getName())
             ->setAccessToken($response->getAccessToken())
             ->setRefreshToken($response->getRefreshToken())
-            ->setUsername($response->getUsername())
-            ->setCreatedAt(new DateTime())
-            ->setUpdatedAt(new DateTime());
+            ->setUsername($response->getUsername());
     }
 
     public function __toString()
