@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PlaylistRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: PlaylistRepository::class)]
 class Playlist
@@ -26,7 +27,14 @@ class Playlist
     private ?string $provider = null;
 
     #[ORM\Column(length: 512, nullable: true)]
-    private ?string $provider_uri = null;
+    private ?string $providerUri = null;
+
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $providerId = null;
+
+    #[ORM\Column(length: 512, nullable: true)]
+    private ?string $imageUri;
+
 
     public function getId(): ?int
     {
@@ -45,7 +53,7 @@ class Playlist
         return $this->owner;
     }
 
-    public function setOwner(?User $owner): static
+    public function setOwner(User|UserInterface|null $owner): static
     {
         $this->owner = $owner;
 
@@ -78,13 +86,38 @@ class Playlist
 
     public function getProviderUri(): ?string
     {
-        return $this->provider_uri;
+        return $this->providerUri;
     }
 
-    public function setProviderUri(?string $provider_uri): static
+    public function setProviderUri(?string $providerUri): static
     {
-        $this->provider_uri = $provider_uri;
+        $this->providerUri = $providerUri;
 
         return $this;
     }
+
+    public function getProviderId(): ?string
+    {
+        return $this->providerId;
+    }
+
+    public function setProviderId(?string $providerID): static
+    {
+        $this->providerId = $providerID;
+
+        return $this;
+    }
+
+    public function getImageUri(): ?string
+    {
+        return $this->imageUri;
+    }
+
+    public function setImageUri(?string $imageUri): static
+    {
+        $this->imageUri = $imageUri;
+
+        return $this;
+    }
+
 }

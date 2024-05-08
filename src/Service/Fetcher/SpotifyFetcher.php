@@ -3,6 +3,9 @@
 namespace App\Service\Fetcher;
 
 use App\Service\Enums\Providers;
+use App\Service\Fetcher\Dto\ArtistDto;
+use App\Service\Fetcher\Dto\PlaylistDto;
+use App\Service\Fetcher\Dto\TrackDto;
 use App\Service\Fetcher\Interface\FetcherInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,30 +30,26 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
             $response = $this->makeRequest($url);
             $responseData = $response->toArray(); 
 
-            $currentItems = $this->getItemsFromResponse($responseData);
+            $currentItems = $responseData['items'] ?? [];
             $items = array_merge($items, $currentItems);
 
-            $url = $this->getNextUrl($responseData);
+            $url = $responseData['next'] ?? null;
 
         } while ($url);
 
-        if (empty($items)) {
-            return $this->emptyResponse();
-        }
+        $data = [];
 
-         
+        //@todo: May we use `yield` ?
         foreach($items as $item) {
-            $playList = [];
-
-            $playList['id'] = $item['id'];
-            $playList['title'] = $item['name'];
-            $playList['image'] = end($item['images'])['url'];
-            $playList['url'] = $item['uri'];
-            $playList['tracks'] = $this->fetchTracks($item['tracks']);
-//            $playList['tracks'] = [
-//                'href' => $item['tracks']['href'],
-//                'total' => $item['tracks']['total'],
-//            ];
+            $playList = new PlaylistDto(
+                $this->user,
+                $item['name'],
+                self::NAME->value,
+                end($item['images'])['url'],
+                $item['uri'],
+                $item['id'],
+                $this->fetchTracks($item['tracks'])
+            );
 
             $data[] = $playList;
         }
@@ -62,16 +61,47 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
     }
 
 
-    public function fetchTracks(array $playListItem)
+    public function fetchTracks(array $playlist): array
     {
+        $items = [];
+        $url = $playlist['href'];
+
+        $url .= '?fields=next,items(track(id,name,popularity,href,artists(id, name,uri)))';
+        do {
+            $response = $this->makeRequest($url)->getContent();
+
+            $responseData = json_decode($response, true);
+
+            $currentItems = $responseData['items'] ?? [];
+
+            $items = array_merge($items, $currentItems);
+
+            $url = $responseData['next'] ?? null;
+        } while ($url);
+
         $tracks = [];
-        if ($playListItem['total'] === 0) {
-            return $tracks;
+        foreach ($items as $row) {
+            $item = $row['track'];
+            $track = new TrackDto(
+                $item['id'],
+                $item['name'],
+                $item['href'],
+                $item['popularity']
+            );
+
+            foreach ($item['artists'] as $artist) {
+                $track->addArtist(
+                    new ArtistDto(
+                        $artist['id'],
+                        $artist['name'],
+                        $artist['uri'],
+                    )
+                );
+            }
+            $tracks[] = $track;
         }
 
-        $tracksResponse = $this->makeRequest($playListItem['href']);
-        $data = json_decode($tracksResponse->getContent());
-
+        return $tracks;
     }
 
     private function buildUrl(): string
@@ -86,31 +116,14 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
 
     private function makeRequest(string $url): ResponseInterface
     {
-        try {
-            $response = $this->httpClient->request(
-                'GET',
-                $url,
-                [
-                    'headers' => [
-                        'Authorization' => 'Bearer ' . $this->user->getUserOAuthByProviderKey(self::NAME->value)->getAccessToken(),
-                    ],
-                ]
-            );
-        } catch (\Exception $exception) {
-            throw $exception;
-        }
-
-        return $response;
+        return $this->httpClient->request(
+            'GET',
+            $url,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->user->getUserOAuthByProviderKey(self::NAME->value)->getAccessToken(),
+                ],
+            ]
+        );
     }
-
-    private function getNextUrl(array $responseData): ?string
-    {
-        return $responseData['next'] ?? null;
-    }
-
-    private function getItemsFromResponse(array $responseData): array
-    {
-        return $responseData['items'] ?? [];
-    }
-
 }

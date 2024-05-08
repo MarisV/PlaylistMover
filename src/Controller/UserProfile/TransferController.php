@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller\UserProfile;
+use App\Import\PlaylistCreateService;
 use App\Service\Enums\Providers;
 use App\Service\Fetcher\FetcherFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,11 +25,13 @@ class TransferController extends AbstractController
     }
 
     #[Route('/fetch/{provider}', name: 'fetch_playlists')]
-    public function fetchPlaylists(Providers $provider, FetcherFactory $fetcherFactory): JsonResponse
+    public function fetchPlaylists(Providers $provider, FetcherFactory $fetcherFactory, PlaylistCreateService $playlistCreateService): JsonResponse
     {
         $fetcher = $fetcherFactory->factory($provider);
 
         $response = $fetcher->fetchPlaylists();
+
+       // $result = $playlistCreateService->createFromApi($response, $provider, $this->getUser());
 
         return new JsonResponse([
             'status' => 200,
