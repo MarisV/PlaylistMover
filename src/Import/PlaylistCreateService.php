@@ -17,7 +17,6 @@ readonly class PlaylistCreateService
 
     public function createFromApi(array $playlists, Providers $provider, UserInterface $owner): int
     {
-
         $counter = 0;
         $batchSize = 10;
 
@@ -30,7 +29,6 @@ readonly class PlaylistCreateService
                 ->setImageUri($playlist->getImageUri())
                 ->setProviderUri($playlist->getProviderUri())
                 ->setProviderId($playlist->getProviderId());
-
 
 
             $this->entityManager->persist($playlist);

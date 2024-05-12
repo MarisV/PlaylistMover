@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PlaylistRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -34,6 +36,14 @@ class Playlist
 
     #[ORM\Column(length: 512, nullable: true)]
     private ?string $imageUri;
+
+    #[ORM\ManyToMany(targetEntity: Track::class, inversedBy: 'playlists')]
+    private Collection $tracks;
+
+    public function __construct()
+    {
+        $this->tracks = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -116,6 +126,30 @@ class Playlist
     public function setImageUri(?string $imageUri): static
     {
         $this->imageUri = $imageUri;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Track>
+     */
+    public function getTracks(): Collection
+    {
+        return $this->tracks;
+    }
+
+    public function addTrack(Track $track): static
+    {
+        if (!$this->tracks->contains($track)) {
+            $this->tracks->add($track);
+        }
+
+        return $this;
+    }
+
+    public function removeTrack(Track $track): static
+    {
+        $this->tracks->removeElement($track);
 
         return $this;
     }
