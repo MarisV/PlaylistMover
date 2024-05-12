@@ -29,7 +29,7 @@ class TransferController extends AbstractController
     {
         $fetcher = $fetcherFactory->factory($provider);
 
-        $response = $fetcher->fetchPlaylists();
+        $response = $fetcher->fetchPlaylistsData();
 
        // $result = $playlistCreateService->createFromApi($response, $provider, $this->getUser());
 

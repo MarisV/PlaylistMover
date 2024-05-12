@@ -8,7 +8,6 @@ use App\Service\Fetcher\Dto\PlaylistDto;
 use App\Service\Fetcher\Dto\TrackDto;
 use App\Service\Fetcher\Interface\FetcherInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 #[AutoconfigureTag(name: "fetcher_provider")]
@@ -21,7 +20,7 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
     public const TOKEN_REFRESH_URL = 'https://accounts.spotify.com/api/token';
 
 
-    final function fetchPlaylists(): JsonResponse|array
+    final function fetchPlaylistsData(): array
     {
         $items = [];
         $url = $this->buildUrl();
@@ -39,7 +38,6 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
 
         $data = [];
 
-        //@todo: May we use `yield` ?
         foreach($items as $item) {
             $playList = new PlaylistDto(
                 $this->user,

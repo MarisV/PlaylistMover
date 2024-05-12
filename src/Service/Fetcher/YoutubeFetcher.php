@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 class YoutubeFetcher extends BaseFetcher implements FetcherInterface
 {
 
-    public function fetchPlaylists(): array
+    public function fetchPlaylistsData(): array
     {
         return [
             'count' => 0,
