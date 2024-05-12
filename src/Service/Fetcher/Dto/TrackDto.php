@@ -2,15 +2,15 @@
 
 namespace App\Service\Fetcher\Dto;
 
-final readonly class TrackDto
+final class TrackDto
 {
     private ?array $artists;
 
     public function __construct(
-        private ?string          $id,
-        private ?string          $name,
-        private ?string          $href,
-        private ?int             $popularity,
+        private readonly ?string          $id,
+        private readonly ?string          $name,
+        private readonly ?string          $href,
+        private readonly ?int             $popularity,
     )
     {
         

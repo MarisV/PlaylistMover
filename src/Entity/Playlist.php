@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PlaylistRepository;
+use App\Service\Fetcher\Dto\PlaylistDto;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,7 +20,7 @@ class Playlist
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'playlists')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'playlists')]
     private ?User $owner = null;
 
     #[ORM\Column(length: 512)]
@@ -43,6 +44,16 @@ class Playlist
     public function __construct()
     {
         $this->tracks = new ArrayCollection();
+    }
+
+    public static function fromDTO(PlaylistDto $dto): Playlist
+    {
+        return
+            (new self)
+                ->setTitle($dto->getTitle())
+                ->setImageUri($dto->getImageUri())
+                ->setProviderUri($dto->getProviderUri())
+                ->setProviderId($dto->getProviderId());
     }
 
 

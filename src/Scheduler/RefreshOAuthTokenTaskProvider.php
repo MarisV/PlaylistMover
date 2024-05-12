@@ -17,7 +17,7 @@ class RefreshOAuthTokenTaskProvider implements ScheduleProviderInterface
         return (new Schedule())
             ->add(
                 //@todo: Change frequency
-                RecurringMessage::every('1 hour', new RefreshOAuthToken(Providers::SPOTIFY))
+                RecurringMessage::every('1 minute', new RefreshOAuthToken(Providers::SPOTIFY))
             );
     }
 }

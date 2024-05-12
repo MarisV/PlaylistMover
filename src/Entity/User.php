@@ -28,9 +28,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
@@ -43,10 +40,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserOAuth::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserOAuth::class, cascade: ['persist', 'remove'])]
     private Collection $userOAuths;
 
-    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Playlist::class)]
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Playlist::class, cascade: ['persist', 'remove'])]
     private Collection $playlists;
 
     public function __construct()
@@ -55,7 +52,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->playlists = new ArrayCollection();
     }
 
-    public static function fromOAuthResponse(UserResponseInterface $response)
+    public function __toString()
+    {
+        return sprintf('#%d - %s', $this->id, $this->email);
+    }
+    
+    public static function fromOAuthResponse(UserResponseInterface $response): User
     {
         return (new self())
             ->setEmail($response->getEmail())

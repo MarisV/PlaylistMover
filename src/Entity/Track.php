@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\TrackRepository;
+use App\Service\Fetcher\Dto\TrackDto;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -28,9 +29,21 @@ class Track
     #[ORM\ManyToMany(targetEntity: Playlist::class, mappedBy: 'tracks')]
     private Collection $playlists;
 
+    #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'tracks')]
+    private Collection $artists;
+
     public function __construct()
     {
         $this->playlists = new ArrayCollection();
+        $this->artists = new ArrayCollection();
+    }
+
+    public static function fromDTO(TrackDto $dto): Track
+    {
+        return (new self)
+            ->setName($dto->getName())
+            ->setHref($dto->getHref())
+            ->setPopularity($dto->getPopularity());
     }
 
     public function getId(): ?int
@@ -104,6 +117,30 @@ class Track
         if ($this->playlists->removeElement($playlist)) {
             $playlist->removeTrack($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Artist>
+     */
+    public function getArtists(): Collection
+    {
+        return $this->artists;
+    }
+
+    public function addArtist(Artist $artist): static
+    {
+        if (!$this->artists->contains($artist)) {
+            $this->artists->add($artist);
+        }
+
+        return $this;
+    }
+
+    public function removeArtist(Artist $artist): static
+    {
+        $this->artists->removeElement($artist);
 
         return $this;
     }
