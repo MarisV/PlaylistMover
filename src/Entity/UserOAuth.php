@@ -24,13 +24,13 @@ class UserOAuth
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $identifier = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 512, nullable: true)]
     private ?string $refreshToken = null;
 
     #[ORM\ManyToOne(inversedBy: 'userOAuths')]
     private ?User $user = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 512, nullable: true)]
     private ?string $accessToken = null;
 
     #[ORM\Column(name: 'username', type: 'string', nullable: true)]
@@ -43,9 +43,12 @@ class UserOAuth
             ->setProvider($response->getResourceOwner()->getName())
             ->setAccessToken($response->getAccessToken())
             ->setRefreshToken($response->getRefreshToken())
-            ->setUsername($response->getUsername())
-            ->setCreatedAt(new DateTime())
-            ->setUpdatedAt(new DateTime());
+            ->setUsername($response->getUsername());
+    }
+
+    public function __toString()
+    {
+        return sprintf('#%d| "%s" - %s - ',$this->id, $this->provider, $this->identifier);
     }
 
     public function getId(): ?int

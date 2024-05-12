@@ -4,6 +4,7 @@ namespace App\Service\Fetcher\Interface;
 
 interface FetcherInterface
 {
-    public function fetchPlaylists();
-    public function fetchTracks();
+    public const NAME = '';
+    public function fetchPlaylistsData();
+//    public function fetchTracks();
 }
