@@ -11,6 +11,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: PlaylistRepository::class)]
+#[ORM\UniqueConstraint()]
 class Playlist
 {
     use TimestampableEntity;
@@ -39,6 +40,9 @@ class Playlist
     private ?string $imageUri;
 
     #[ORM\ManyToMany(targetEntity: Track::class, inversedBy: 'playlists')]
+    #[ORM\JoinTable(name: 'playlist_track')]
+    #[ORM\JoinColumn(name: 'playlist_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'track_id', referencedColumnName: 'id', unique: true)]
     private Collection $tracks;
 
     public function __construct()
