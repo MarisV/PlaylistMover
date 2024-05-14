@@ -11,7 +11,6 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: PlaylistRepository::class)]
-#[ORM\UniqueConstraint()]
 class Playlist
 {
     use TimestampableEntity;
