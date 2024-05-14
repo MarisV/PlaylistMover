@@ -35,6 +35,9 @@ class Track
     #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'tracks')]
     private Collection $artists;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $hash = null;
+
     public function __construct()
     {
         $this->playlists = new ArrayCollection();
@@ -144,6 +147,18 @@ class Track
     public function removeArtist(Artist $artist): static
     {
         $this->artists->removeElement($artist);
+
+        return $this;
+    }
+
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    public function setHash(?string $hash): static
+    {
+        $this->hash = $hash;
 
         return $this;
     }
