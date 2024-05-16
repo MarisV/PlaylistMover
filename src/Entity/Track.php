@@ -38,6 +38,9 @@ class Track
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $hash = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $isrc = null;
+
     public function __construct()
     {
         $this->playlists = new ArrayCollection();
@@ -159,6 +162,18 @@ class Track
     public function setHash(?string $hash): static
     {
         $this->hash = $hash;
+
+        return $this;
+    }
+
+    public function getIsrc(): ?string
+    {
+        return $this->isrc;
+    }
+
+    public function setIsrc(?string $isrc): static
+    {
+        $this->isrc = $isrc;
 
         return $this;
     }
