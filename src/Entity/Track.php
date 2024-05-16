@@ -36,9 +36,6 @@ class Track
     private Collection $artists;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $hash = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $isrc = null;
 
     public function __construct()
@@ -52,7 +49,8 @@ class Track
         return (new self)
             ->setName($dto->getName())
             ->setHref($dto->getHref())
-            ->setPopularity($dto->getPopularity());
+            ->setPopularity($dto->getPopularity())
+            ->setIsrc($dto->getIsrc());
     }
 
     public function getId(): ?int
@@ -150,18 +148,6 @@ class Track
     public function removeArtist(Artist $artist): static
     {
         $this->artists->removeElement($artist);
-
-        return $this;
-    }
-
-    public function getHash(): ?string
-    {
-        return $this->hash;
-    }
-
-    public function setHash(?string $hash): static
-    {
-        $this->hash = $hash;
 
         return $this;
     }

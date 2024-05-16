@@ -11,6 +11,7 @@ final class TrackDto
         private readonly ?string          $name,
         private readonly ?string          $href,
         private readonly ?int             $popularity,
+        private readonly ?string          $isrc
     )
     {
         
@@ -45,5 +46,10 @@ final class TrackDto
     {
         $this->artists[] = $artistDto;
         return $this;
+    }
+
+    public function getIsrc(): ?string
+    {
+        return $this->isrc;
     }
 }

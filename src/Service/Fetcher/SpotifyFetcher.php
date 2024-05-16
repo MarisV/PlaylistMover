@@ -64,14 +64,13 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
         $items = [];
         $url = $playlist['href'];
 
-        $url .= '?fields=next,items(track(id,name,popularity,href,artists(id, name,uri)))';
+        $url .= '?fields=next,items(track(id,name,popularity,href,external_ids(isrc),artists(id, name,uri)))';
         do {
             $response = $this->makeRequest($url)->getContent();
 
             $responseData = json_decode($response, true);
 
             $currentItems = $responseData['items'] ?? [];
-
             $items = array_merge($items, $currentItems);
 
             $url = $responseData['next'] ?? null;
@@ -84,7 +83,8 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
                 $item['id'],
                 $item['name'],
                 $item['href'],
-                $item['popularity']
+                $item['popularity'],
+                $item['external_ids']['isrc'] ?? null
             );
 
             foreach ($item['artists'] as $artist) {
