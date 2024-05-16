@@ -84,7 +84,7 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
                 $item['name'],
                 $item['href'],
                 $item['popularity'],
-                $item['external_ids']['isrc'] ?? null
+                $item['external_ids']['isrc'] ?? (md5($item['name'] ?? $item['href']))
             );
 
             foreach ($item['artists'] as $artist) {

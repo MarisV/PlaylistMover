@@ -45,4 +45,10 @@ class TrackRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function getIdentifiers()
+    {
+        return $this->createQueryBuilder('t')
+           ->select('t.id, t.isrc')
+            ->getQuery()->getResult();
+    }
 }
