@@ -11,6 +11,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: TrackRepository::class)]
+#[ORM\Index(fields: ['isrc'], name: 'track_isrc_idx', options: [
+    "where" => "((isrc IS NOT NULL))"
+])]
 class Track
 {
     use TimestampableEntity;
