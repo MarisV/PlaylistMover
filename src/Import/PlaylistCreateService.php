@@ -5,16 +5,20 @@ namespace App\Import;
 use App\Entity\Artist;
 use App\Entity\Playlist;
 use App\Entity\Track;
+use App\Repository\TrackRepository;
 use App\Service\Enums\Providers;
 use App\Service\Fetcher\Dto\PlaylistDto;
+use App\Service\Fetcher\Dto\TrackDto;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 readonly class PlaylistCreateService
 {
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
+    private array $tracksidentifiers;
 
+    public function __construct(private EntityManagerInterface $entityManager, private TrackRepository $trackRepository)
+    {
+        $this->tracksidentifiers = $this->trackRepository->getIdentifiers();
     }
 
     /**
@@ -31,9 +35,7 @@ readonly class PlaylistCreateService
                 ->setProvider($provider->value);
 
             foreach ($playlistDto->getTracks() as $trackDto) {
-                $track = Track::fromDTO($trackDto);
-
-                $this->entityManager->persist($track);
+                $track = $this->findTrackOrCreate($trackDto);
 
                 foreach ($trackDto->getArtists() as $artistDto) {
                     $artist = Artist::fromDTO($artistDto);
@@ -54,5 +56,22 @@ readonly class PlaylistCreateService
         $this->entityManager->clear();
 
         return $counter;
+    }
+
+    private function findTrackOrCreate(TrackDto $trackDto): Track
+    {
+        if ($trackDto->getIsrc()) {
+            $track = $this->trackRepository->findOneBy([
+                'isrc' => $trackDto->getIsrc()
+            ]);
+
+            if ($track) {
+                return $track;
+            }
+        }
+        $track = Track::fromDTO($trackDto);
+        $this->entityManager->persist($track);
+
+        return $track;
     }
 }

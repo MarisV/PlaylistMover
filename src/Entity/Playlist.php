@@ -39,6 +39,9 @@ class Playlist
     private ?string $imageUri;
 
     #[ORM\ManyToMany(targetEntity: Track::class, inversedBy: 'playlists')]
+    #[ORM\JoinTable(name: 'playlist_track')]
+    #[ORM\JoinColumn(name: 'playlist_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'track_id', referencedColumnName: 'id')]
     private Collection $tracks;
 
     public function __construct()

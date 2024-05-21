@@ -35,9 +35,11 @@ class TransferController extends AbstractController
 
         $response = $fetcher->fetchPlaylistsData();
 
-        $this->stopwatch->stop($provider->value);
-
         $result = $playlistCreateService->createFromApi($response, $provider, $this->getUser());
+
+        $event = $this->stopwatch->stop($provider->value);
+
+        $duration = $event->getDuration();
 
         return new JsonResponse([
             'status' => 200,

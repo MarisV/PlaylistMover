@@ -11,6 +11,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: TrackRepository::class)]
+#[ORM\Index(fields: ['isrc'], name: 'track_isrc_idx', options: [
+    "where" => "((isrc IS NOT NULL))"
+])]
 class Track
 {
     use TimestampableEntity;
@@ -35,6 +38,9 @@ class Track
     #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'tracks')]
     private Collection $artists;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $isrc = null;
+
     public function __construct()
     {
         $this->playlists = new ArrayCollection();
@@ -46,7 +52,8 @@ class Track
         return (new self)
             ->setName($dto->getName())
             ->setHref($dto->getHref())
-            ->setPopularity($dto->getPopularity());
+            ->setPopularity($dto->getPopularity())
+            ->setIsrc($dto->getIsrc());
     }
 
     public function getId(): ?int
@@ -144,6 +151,18 @@ class Track
     public function removeArtist(Artist $artist): static
     {
         $this->artists->removeElement($artist);
+
+        return $this;
+    }
+
+    public function getIsrc(): ?string
+    {
+        return $this->isrc;
+    }
+
+    public function setIsrc(?string $isrc): static
+    {
+        $this->isrc = $isrc;
 
         return $this;
     }

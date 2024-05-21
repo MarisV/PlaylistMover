@@ -5,10 +5,8 @@ namespace App\Security\Service;
 use App\Entity\UserOAuth;
 use App\Service\Fetcher\SpotifyFetcher;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBag;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
 readonly class OAuthService
 {
@@ -25,7 +23,6 @@ readonly class OAuthService
      */
     public function refreshSpotifyToken(UserOAuth $userOAuth): bool
     {
-
         $payload = [
             'grant_type' => 'refresh_token',
             'refresh_token' => $userOAuth->getRefreshToken(),
