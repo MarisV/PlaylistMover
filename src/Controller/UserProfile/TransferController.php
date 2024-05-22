@@ -34,7 +34,7 @@ class TransferController extends AbstractController
 
         $response = $fetcher->fetchPlaylistsData();
 
-        $result = $playlistCreateService->createFromApi($response, $provider, $this->getUser());
+//        $result = $playlistCreateService->createFromApi($response, $provider, $this->getUser());
 
         $this->addFlash('success', 'Success');
 
