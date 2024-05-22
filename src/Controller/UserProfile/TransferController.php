@@ -2,48 +2,42 @@
 
 namespace App\Controller\UserProfile;
 use App\Import\PlaylistCreateService;
+use App\Model\PlaylistsStatsModel;
 use App\Service\Enums\Providers;
 use App\Service\Fetcher\FetcherFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 #[Route('/profile/transfer', 'app_')]
 
 class TransferController extends AbstractController
 {
-    public function __construct(
-        private readonly Stopwatch $stopwatch
-    ) { }
+    public function __construct() { }
 
     #[Route('/', name: 'transfer')]
     public function index(): Response
     {
         return $this->render('profile/transfer/index.html.twig', [
-            'controller_name' => 'TransferController',
+           'stats' => (new PlaylistsStatsModel($this->getUser()))->getPlaylistsStats(),
         ]);
     }
 
     #[Route('/fetch/{provider}', name: 'fetch_playlists')]
-    public function fetchPlaylists(Providers $provider, FetcherFactory $fetcherFactory, PlaylistCreateService $playlistCreateService): JsonResponse
-    {
+    public function fetchPlaylists(
+        Providers $provider,
+        FetcherFactory $fetcherFactory,
+        PlaylistCreateService $playlistCreateService
+    ): RedirectResponse {
         $fetcher = $fetcherFactory->factory($provider);
-
-        $this->stopwatch->start($provider->value, 'Fetch playlists');
 
         $response = $fetcher->fetchPlaylistsData();
 
         $result = $playlistCreateService->createFromApi($response, $provider, $this->getUser());
 
-        $event = $this->stopwatch->stop($provider->value);
+        $this->addFlash('success', 'Success');
 
-        $duration = $event->getDuration();
-
-        return new JsonResponse([
-            'status' => 200,
-            'data' => $result,
-        ]);
+        return $this->redirectToRoute('app_transfer');
     }
 }

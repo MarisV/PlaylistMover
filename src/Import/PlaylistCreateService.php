@@ -5,6 +5,8 @@ namespace App\Import;
 use App\Entity\Artist;
 use App\Entity\Playlist;
 use App\Entity\Track;
+use App\Entity\User;
+use App\Repository\PlaylistRepository;
 use App\Repository\TrackRepository;
 use App\Service\Enums\Providers;
 use App\Service\Fetcher\Dto\PlaylistDto;
@@ -16,8 +18,12 @@ readonly class PlaylistCreateService
 {
     private array $tracksidentifiers;
 
-    public function __construct(private EntityManagerInterface $entityManager, private TrackRepository $trackRepository)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private TrackRepository $trackRepository,
+        private PlaylistRepository $playlistRepository
+    ) {
+        //@todo: Maybe store isrc in some cache/redis?
         $this->tracksidentifiers = $this->trackRepository->getIdentifiers();
     }
 
@@ -30,8 +36,10 @@ readonly class PlaylistCreateService
         $batchSize = 10;
 
         foreach ($playlists['data'] as $playlistDto) {
-            $playlist = Playlist::fromDTO($playlistDto)
-                ->setOwner($owner)
+
+            $playlist = $this->getPlaylistOrCreate($playlistDto);
+            $playlist
+                ->setOwner($this->entityManager->getReference(User::class, $owner->getId()))
                 ->setProvider($provider->value);
 
             foreach ($playlistDto->getTracks() as $trackDto) {
@@ -58,6 +66,25 @@ readonly class PlaylistCreateService
         return $counter;
     }
 
+
+    private function getPlaylistOrCreate(PlaylistDto $playlistDto)
+    {
+        if ($playlistDto->getProviderId()) {
+            $playlist = $this->playlistRepository->findOneBy([
+                'providerId' => $playlistDto->getProviderId(),
+            ]);
+
+            if ($playlist) {
+                return $playlist;
+            }
+        }
+
+        $playlist = Playlist::fromDTO($playlistDto);
+        $this->entityManager->persist($playlist);
+
+        return $playlist;
+    }
+
     private function findTrackOrCreate(TrackDto $trackDto): Track
     {
         if ($trackDto->getIsrc()) {
@@ -74,4 +101,5 @@ readonly class PlaylistCreateService
 
         return $track;
     }
+
 }

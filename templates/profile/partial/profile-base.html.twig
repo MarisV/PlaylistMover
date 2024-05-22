@@ -8,7 +8,14 @@
       <div class="settings-wrapper__title"> 
         Hi, {{ app.user.name }}!      
       </div>
-       {% include('/profile/partial/navigation-tabs.html.twig') %}
+
+      <div class="">
+        {% for msg in app.flashes('success') %}
+          {{ msg }}
+        {% endfor %}
+      </div>
+
+      {% include('/profile/partial/navigation-tabs.html.twig') %}
       <div class="settings-wrapper__main-content">
         
         {% block main_content %}{% endblock %}

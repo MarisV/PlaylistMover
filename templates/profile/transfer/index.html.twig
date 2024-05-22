@@ -3,12 +3,36 @@
 {% block main_content %}
       <div class="row mb-5"> 
         <div class="col settings-wrapper__main-content-subtitle"> 
-            My transfers
+            My Imports
         </div>
         <div class="col settings-wrapper__main-content_new-connection">
           <a class="btn btn-default" id="connections-modal" href="#" data-bs-toggle="modal" data-bs-target=".new-transfer-modal">New transfer</a>
         </div>
       </div>
+    <div class="row">
+      <div class="col-md-6">
+        <table class="table table-striped-columns">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Total Playlists</th>
+              <th>Total Tracks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for provider, data in stats %}
+              <tr>
+              <tr>
+                <td>{{ provider|capitalize }}</td>
+                <td>{{ data['playlists_count'] }}</td>
+                <td>{{ data['tracks_count'] }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+    </div>
 
   {{ include('/profile/partial/new-transfer-modal.html.twig') }}
 

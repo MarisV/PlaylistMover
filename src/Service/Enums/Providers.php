@@ -4,6 +4,6 @@ namespace App\Service\Enums;
 
 enum Providers: string
 {
-    case GOOGLE = 'google';
+    case YOUTUBE = 'youtube';
     case SPOTIFY = 'spotify';
 }

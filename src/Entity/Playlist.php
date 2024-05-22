@@ -20,7 +20,7 @@ class Playlist
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'playlists')]
+    #[ORM\ManyToOne(inversedBy: 'playlists')]
     private ?User $owner = null;
 
     #[ORM\Column(length: 512)]
