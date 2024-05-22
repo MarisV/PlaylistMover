@@ -39,10 +39,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserOAuth::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserOAuth::class, cascade: ['remove'])]
     private Collection $userOAuths;
 
-    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Playlist::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Playlist::class, cascade: ['remove'])]
     private Collection $playlists;
 
     public function __construct()
