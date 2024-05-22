@@ -1,14 +1,7 @@
 {% extends 'profile/partial/profile-base.html.twig' %}
 
 {% block main_content %}
-      <div class="row mb-5"> 
-        <div class="col settings-wrapper__main-content-subtitle"> 
-            My Imports
-        </div>
-        <div class="col settings-wrapper__main-content_new-connection">
-          <a class="btn btn-default" id="connections-modal" href="#" data-bs-toggle="modal" data-bs-target=".new-transfer-modal">New transfer</a>
-        </div>
-      </div>
+
     <div class="row">
       <div class="col-md-6">
         <table class="table table-striped-columns">
@@ -32,6 +25,12 @@
 
         </table>
       </div>
+      <div class="col-md-3">
+        <div class="settings-wrapper__main-content_new-connection">
+          <a class="btn btn-default" id="connections-modal" href="#" data-bs-toggle="modal" data-bs-target=".new-transfer-modal">New import</a>
+        </div>
+      </div>
+
     </div>
 
   {{ include('/profile/partial/new-transfer-modal.html.twig') }}
