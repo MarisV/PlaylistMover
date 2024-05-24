@@ -6,6 +6,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 abstract class BaseFetcher {
 
@@ -18,11 +19,16 @@ abstract class BaseFetcher {
         $this->user = $security->getUser();
     }
 
-    protected function emptyResponse(): JsonResponse
+    protected function makeRequest(string $url): ResponseInterface
     {
-        return new JsonResponse([
-            'count' => 0,
-            'data' => [],
-        ]);
+        return $this->httpClient->request(
+            'GET',
+            $url,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->user->getUserOAuthByProviderKey(static::NAME->value)->getAccessToken(),
+                ],
+            ]
+        );
     }
 }

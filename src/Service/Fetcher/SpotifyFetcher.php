@@ -43,7 +43,7 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
                 $this->user,
                 $item['name'],
                 self::NAME->value,
-                end($item['images'])['url'],
+                $item['images'] ? end($item['images'])['url'] : '-',
                 $item['uri'],
                 $item['id'],
                 $this->fetchTracks($item['tracks'])
@@ -110,18 +110,5 @@ class SpotifyFetcher extends BaseFetcher implements FetcherInterface
             ':user_id' => $auth->getUsername(),
             ':limit' => self::LIMIT,
         ]);
-    }
-
-    private function makeRequest(string $url): ResponseInterface
-    {
-        return $this->httpClient->request(
-            'GET',
-            $url,
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->user->getUserOAuthByProviderKey(self::NAME->value)->getAccessToken(),
-                ],
-            ]
-        );
     }
 }

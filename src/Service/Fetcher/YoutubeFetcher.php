@@ -3,6 +3,9 @@
 namespace App\Service\Fetcher;
 
 use App\Service\Enums\Providers;
+use App\Service\Fetcher\Dto\ArtistDto;
+use App\Service\Fetcher\Dto\PlaylistDto;
+use App\Service\Fetcher\Dto\TrackDto;
 use App\Service\Fetcher\Interface\FetcherInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -13,7 +16,15 @@ class YoutubeFetcher extends BaseFetcher implements FetcherInterface
     public const NAME = Providers::YOUTUBE;
 
     private CONST LIMIT = 50;
-    private const FETCH_URL = 'https://youtube.googleapis.com/youtube/v3/playlists?part=contentDetails,snippet&maxResults=:limit&mine=true&key=:api_key';
+    /**
+     * @TODO; Use http_build_query
+     */
+    private const PLAYLISTS_URL = 'https://youtube.googleapis.com/youtube/v3/playlists?part=contentDetails,snippet&maxResults=:limit&mine=true&key=:api_key';
+    private const TRACKS_URL = 'https://youtube.googleapis.com/youtube/v3/playlistItems?';
+
+    /**
+     * @TODO: Move api key to wallet
+     */
     private const API_KEY = 'AIzaSyD2-_SN8FXZj_aU8seJUzbDj1_9eNV3Hhw';
 
     public function fetchPlaylistsData(): array
@@ -21,43 +32,97 @@ class YoutubeFetcher extends BaseFetcher implements FetcherInterface
 
         $items = [];
         $url = $this->buildUrl();
+        do{
+            $response = $this->makeRequest($url);
+            $responseData = $response->toArray();
 
-        $response = $this->makeRequest($url);
-        $responseData = $response->toArray();
+            $currentItems = $responseData['items'] ?? [];
+            $items = array_merge($items, $currentItems);
+
+            $pageToken = $responseData['nextPageToken'] ?? null;
+            $url = $pageToken ? $url . '&pageToken=' . $pageToken : null;
+
+        } while ($url);
+
+        $data = [];
+        foreach($items as $item) {
+            $snippet = $item['snippet'];
+
+            $playList = new PlaylistDto(
+                $this->user,
+                $snippet['title'],
+                self::NAME->value,
+                $snippet['thumbnails']['default']['url'],
+                null,
+                $item['id'],
+                $this->fetchTracks($item['id'])
+            );
+
+            $data[] = $playList;
+        }
+
 
         return [
-            'count' => 0,
-            'data' => []
+            'count' => count($data),
+            'data' => $data
         ];
     }
 
     private function buildUrl(): string
     {
-        $auth = $this->user->getUserOAuthByProviderKey(self::NAME->value);
-
-        return strtr(self::FETCH_URL, [
+        return strtr(self::PLAYLISTS_URL, [
             ':limit' => self::LIMIT,
             ':api_key' => self::API_KEY
         ]);
     }
 
-    private function makeRequest(string $url): ResponseInterface
+    public function fetchTracks(string $playlistId): array
     {
+        $items = [];
+        $params = [
+            'part' => 'snippet',
+            'playlistId' => $playlistId,
+            'maxResults' => self::LIMIT,
+            'key' => self::API_KEY
+        ];
 
-        return $this->httpClient->request(
-            'GET',
-            $url,
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->user->getUserOAuthByProviderKey(self::NAME->value)->getAccessToken(),
-                ],
-            ]
-        );
+        $url = self::TRACKS_URL . http_build_query($params);
 
-    }
+        do {
+            $response = $this->makeRequest($url)->getContent();
 
-    public function fetchTracks()
-    {
-        // TODO: Implement fetchTracks() method.
+            $responseData = json_decode($response, true);
+
+            $currentItems = $responseData['items'] ?? [];
+            $items = array_merge($items, $currentItems);
+
+            $pageToken = $responseData['nextPageToken'] ?? null;
+            $url = $pageToken ? $url . '&pageToken=' . $pageToken : null;
+
+        } while ($url);
+
+        $tracks = [];
+        foreach ($items as $row) {
+            $item = $row['snippet'];
+
+            $track = new TrackDto(
+                $row['id'],
+                $item['title'],
+                'https://www.youtube.com/watch?v=' . $item['resourceId']['videoId'],
+                $item['position'],
+                $row['etag']
+            );
+
+            $track->addArtist(
+                new ArtistDto(
+                    $item['videoOwnerChannelId'] ?? '-',
+                    str_replace(' - Topic', '', $item['videoOwnerChannelTitle'] ?? ''),
+                    null
+                )
+            );
+            $tracks[] = $track;
+        }
+        return $tracks;
     }
 }
+
