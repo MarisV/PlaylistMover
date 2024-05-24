@@ -9,12 +9,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 #[Route('/profile/transfer', 'app_')]
 
 class TransferController extends AbstractController
 {
-    public function __construct() { }
+    public function __construct(private readonly Stopwatch $stopwatch) { }
 
     #[Route('/', name: 'transfer')]
     public function index(): Response
@@ -32,11 +33,17 @@ class TransferController extends AbstractController
     ): RedirectResponse {
         $fetcher = $fetcherFactory->factory($provider);
 
+        $this->stopwatch->start('Start');
+
         $response = $fetcher->fetchPlaylistsData();
 
         $result = $playlistCreateService->createFromApi($response, $provider, $this->getUser());
 
-        $this->addFlash('success', 'Success');
+        $event = $this->stopwatch->stop('Start');
+
+        $time = $event->getDuration() / 1000;
+
+        $this->addFlash('success', 'Success. Time: ' . $time . ' seconds');
 
         return $this->redirectToRoute('app_transfer');
     }
