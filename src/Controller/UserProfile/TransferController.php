@@ -2,7 +2,6 @@
 
 namespace App\Controller\UserProfile;
 use App\Import\PlaylistCreateService;
-use App\Model\PlaylistsStatsModel;
 use App\Repository\PlaylistRepository;
 use App\Service\Enums\Providers;
 use App\Service\Fetcher\FetcherFactory;
