@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Playlist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<Playlist>
@@ -21,28 +22,34 @@ class PlaylistRepository extends ServiceEntityRepository
         parent::__construct($registry, Playlist::class);
     }
 
-//    /**
-//     * @return Playlist[] Returns an array of Playlist objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function getUserStats(UserInterface $user): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select(
+                'p.provider AS provider',
+                'COUNT(DISTINCT p.id) AS playlists_count',
+                'COUNT(t.id) AS tracks_count'
+            )
+            ->from(Playlist::class, 'p')
+            ->leftJoin('p.tracks', 't')
+            ->where('p.owner = :owner')
+            ->groupBy('p.provider')
+            ->setParameter('owner', $user);
 
-//    public function findOneBySomeField($value): ?Playlist
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+
+        $results = $qb->getQuery()->getResult();
+
+        $stats = [];
+        foreach ($results as $result) {
+            $provider = $result['provider'];
+            $stats[$provider] = [
+                'playlists_count' => $result['playlists_count'],
+                'tracks_count' => $result['tracks_count']
+            ];
+        }
+
+        return $stats;
+    }
+
 }

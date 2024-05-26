@@ -38,7 +38,7 @@ class Playlist
     #[ORM\Column(length: 512, nullable: true)]
     private ?string $imageUri;
 
-    #[ORM\ManyToMany(targetEntity: Track::class, inversedBy: 'playlists')]
+    #[ORM\ManyToMany(targetEntity: Track::class, inversedBy: 'playlists', fetch: 'EXTRA_LAZY')]
     #[ORM\JoinTable(name: 'playlist_track')]
     #[ORM\JoinColumn(name: 'playlist_id', referencedColumnName: 'id')]
     #[ORM\InverseJoinColumn(name: 'track_id', referencedColumnName: 'id')]
