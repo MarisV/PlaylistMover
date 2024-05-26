@@ -6,7 +6,7 @@
 parameters:
     spotify_client_id: '%env(SPOTIFY_CLIENT_ID)%'
     spotify_client_secret: '%env(SPOTIFY_CLIENT_SECRET)%'
-    youtube_abi_key: '%env(YOUTUBE_API_KEY)%'
+    youtube_api_key: '%env(YOUTUBE_API_KEY)%'
     spotify_token_refresh_frequency: '%env(SPOTIFY_TOKEN_REFRESH_FREQUENCY)%'
 services:
     # default configuration for services in *this* file

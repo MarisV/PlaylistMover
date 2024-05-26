@@ -68,7 +68,7 @@ class YoutubeFetcher extends BaseFetcher implements FetcherInterface
             'part' => 'snippet',
             'playlistId' => $playlistId,
             'maxResults' => self::LIMIT,
-            'key' => $this->secrets->get('youtube_abi_key')
+            'key' => $this->secrets->get('youtube_api_key')
         ];
 
         $url = self::TRACKS_URL . http_build_query($params);
@@ -118,7 +118,7 @@ class YoutubeFetcher extends BaseFetcher implements FetcherInterface
                 'part' => 'contentDetails,snippet',
                 'maxResults' => self::LIMIT,
                 'mine' => true,
-                'key' => $this->secrets->get('youtube_abi_key')
+                'key' => $this->secrets->get('youtube_api_key')
 
             ]);
     }
