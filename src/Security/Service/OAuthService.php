@@ -18,9 +18,6 @@ readonly class OAuthService
         
     }
 
-    /**
-     * @todo Add exceptions handling
-     */
     public function refreshSpotifyToken(UserOAuth $userOAuth): bool
     {
         $payload = [

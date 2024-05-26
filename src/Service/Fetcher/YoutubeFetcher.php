@@ -8,7 +8,6 @@ use App\Service\Fetcher\Dto\PlaylistDto;
 use App\Service\Fetcher\Dto\TrackDto;
 use App\Service\Fetcher\Interface\FetcherInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
 #[AutoconfigureTag(name: "fetcher_provider")]
 class YoutubeFetcher extends BaseFetcher implements FetcherInterface
@@ -16,16 +15,9 @@ class YoutubeFetcher extends BaseFetcher implements FetcherInterface
     public const NAME = Providers::YOUTUBE;
 
     private CONST LIMIT = 50;
-    /**
-     * @TODO; Use http_build_query
-     */
-    private const PLAYLISTS_URL = 'https://youtube.googleapis.com/youtube/v3/playlists?part=contentDetails,snippet&maxResults=:limit&mine=true&key=:api_key';
-    private const TRACKS_URL = 'https://youtube.googleapis.com/youtube/v3/playlistItems?';
 
-    /**
-     * @TODO: Move api key to wallet
-     */
-    private const API_KEY = 'AIzaSyD2-_SN8FXZj_aU8seJUzbDj1_9eNV3Hhw';
+    private const PLAYLISTS_URL = 'https://youtube.googleapis.com/youtube/v3/playlists?';
+    private const TRACKS_URL = 'https://youtube.googleapis.com/youtube/v3/playlistItems?';
 
     public function fetchPlaylistsData(): array
     {
@@ -68,13 +60,6 @@ class YoutubeFetcher extends BaseFetcher implements FetcherInterface
         ];
     }
 
-    private function buildUrl(): string
-    {
-        return strtr(self::PLAYLISTS_URL, [
-            ':limit' => self::LIMIT,
-            ':api_key' => self::API_KEY
-        ]);
-    }
 
     public function fetchTracks(string $playlistId): array
     {
@@ -83,7 +68,7 @@ class YoutubeFetcher extends BaseFetcher implements FetcherInterface
             'part' => 'snippet',
             'playlistId' => $playlistId,
             'maxResults' => self::LIMIT,
-            'key' => self::API_KEY
+            'key' => $this->secrets->get('youtube_api_key')
         ];
 
         $url = self::TRACKS_URL . http_build_query($params);
@@ -123,6 +108,19 @@ class YoutubeFetcher extends BaseFetcher implements FetcherInterface
             $tracks[] = $track;
         }
         return $tracks;
+    }
+
+
+    private function buildUrl(): string
+    {
+        return self::PLAYLISTS_URL .
+            http_build_query([
+                'part' => 'contentDetails,snippet',
+                'maxResults' => self::LIMIT,
+                'mine' => true,
+                'key' => $this->secrets->get('youtube_api_key')
+
+            ]);
     }
 }
 

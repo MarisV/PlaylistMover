@@ -2,7 +2,7 @@
 
 namespace App\Controller\UserProfile;
 use App\Import\PlaylistCreateService;
-use App\Model\PlaylistsStatsModel;
+use App\Repository\PlaylistRepository;
 use App\Service\Enums\Providers;
 use App\Service\Fetcher\FetcherFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,10 +18,10 @@ class TransferController extends AbstractController
     public function __construct(private readonly Stopwatch $stopwatch) { }
 
     #[Route('/', name: 'transfer')]
-    public function index(): Response
+    public function index(PlaylistRepository $playlistRepository): Response
     {
         return $this->render('profile/transfer/index.html.twig', [
-           'stats' => (new PlaylistsStatsModel($this->getUser()))->getPlaylistsStats(),
+           'stats' => $playlistRepository->getUserStats($this->getUser()),
         ]);
     }
 

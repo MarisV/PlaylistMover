@@ -6,9 +6,6 @@ use App\Entity\Artist;
 use App\Entity\Playlist;
 use App\Entity\Track;
 use App\Entity\User;
-use App\Repository\ArtistRepository;
-use App\Repository\PlaylistRepository;
-use App\Repository\TrackRepository;
 use App\Service\Enums\Providers;
 use App\Service\Fetcher\Dto\ArtistDto;
 use App\Service\Fetcher\Dto\PlaylistDto;
@@ -20,16 +17,10 @@ readonly class PlaylistCreateService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private TrackRepository $trackRepository,
-        private PlaylistRepository $playlistRepository,
-        private ArtistRepository $artistRepository,
     ) {
 
     }
 
-    /**
-     * @todo: Add try-catch, EM-transactions
-     */
     public function createFromApi(array $playlists, Providers $provider, UserInterface $owner): int
     {
         $counter = 0;
@@ -38,6 +29,7 @@ readonly class PlaylistCreateService
         foreach ($playlists['data'] as $playlistDto) {
 
             $playlist = $this->findPlaylistOrCreate($playlistDto);
+
             $playlist
                 ->setOwner($this->entityManager->getReference(User::class, $owner->getId()))
                 ->setProvider($provider->value);
@@ -69,62 +61,54 @@ readonly class PlaylistCreateService
 
     private function findPlaylistOrCreate(PlaylistDto $playlistDto)
     {
-        if ($playlistDto->getProviderId()) {
-            $playlist = $this->playlistRepository->findOneBy([
-                'providerId' => $playlistDto->getProviderId(),
-            ]);
-
-            if ($playlist) {
-                return $playlist;
-            }
-        }
-
-        $playlist = Playlist::fromDTO($playlistDto);
-        $this->entityManager->persist($playlist);
-
-        return $playlist;
+        return $this->findEntityOrCreate(
+            Playlist::class,
+            $playlistDto,
+            'providerId'
+        );
     }
 
     private function findTrackOrCreate(TrackDto $trackDto): Track
     {
-        if ($trackDto->getIsrc()) {
-            $track = $this->trackRepository->findOneBy([
-                'isrc' => $trackDto->getIsrc()
-            ]);
-
-            if ($track) {
-                return $track;
-            }
-        }
-        $track = Track::fromDTO($trackDto);
-        $this->entityManager->persist($track);
-
-        return $track;
+        return $this->findEntityOrCreate(
+            Track::class,
+            $trackDto,
+            'isrc'
+        );
     }
 
     private function findArtistOrCreate(ArtistDto $artistDto): Artist
     {
-        $artist = Artist::fromDTO($artistDto);
+        return $this->findEntityOrCreate(
+            Artist::class,
+            $artistDto,
+            'name'
+        );
+    }
 
-        //@todo: Use same approach or Playlists and Tracks
-        $scheduledForInsert = $this->entityManager->getUnitOfWork()->getScheduledEntityInsertions();;
-        $persisted = array_filter($scheduledForInsert, function(object $entity) use ($artist)  { // So do not persist multiple times
-            return $entity instanceof Artist && $artist->getName() == $entity->getName();
+    private function findEntityOrCreate(string $entityClass, $dto, string $identifierField): object
+    {
+        $entity = $entityClass::fromDTO($dto);
+
+        $scheduledForInsert = $this->entityManager->getUnitOfWork()->getScheduledEntityInsertions();
+        $persisted = array_filter($scheduledForInsert, function(object $scheduledEntity) use ($entity, $identifierField) {
+            return get_class($scheduledEntity) === get_class($entity) && $entity->{'get' . ucfirst($identifierField)}() === $scheduledEntity->{'get' . ucfirst($identifierField)}();
         });
 
         if (count($persisted) > 0) {
             return reset($persisted);
         }
 
-        $existingArtistEntity = $this->artistRepository->findOneBy([
-            'name' => $artistDto->getName()
+        $repository = $this->entityManager->getRepository($entityClass);
+        $existingEntity = $repository->findOneBy([
+            $identifierField => $entity->{'get' . ucfirst($identifierField)}()
         ]);
 
-        if (!$existingArtistEntity) {
-            $this->entityManager->persist($artist);
-            return $artist;
+        if (!$existingEntity) {
+            $this->entityManager->persist($entity);
+            return $entity;
         } else {
-            return $existingArtistEntity;
+            return $existingEntity;
         }
     }
 
