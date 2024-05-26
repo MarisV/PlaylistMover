@@ -3,6 +3,7 @@
 namespace App\Service\Fetcher;
 
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -14,7 +15,8 @@ abstract class BaseFetcher {
 
     public function __construct(
         protected HttpClientInterface $httpClient,
-        protected Security $security
+        protected Security $security,
+        protected ParameterBagInterface $secrets
     ) {
         $this->user = $security->getUser();
     }
