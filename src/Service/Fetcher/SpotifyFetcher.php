@@ -8,7 +8,6 @@ use App\Service\Fetcher\Dto\PlaylistDto;
 use App\Service\Fetcher\Dto\TrackDto;
 use App\Service\Fetcher\Interface\FetcherInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
 #[AutoconfigureTag(name: "fetcher_provider")]
 class SpotifyFetcher extends BaseFetcher implements FetcherInterface
