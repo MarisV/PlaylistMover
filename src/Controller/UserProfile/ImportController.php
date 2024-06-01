@@ -11,16 +11,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-#[Route('/profile/transfer', 'app_')]
+#[Route('/profile/import', 'app_')]
 
-class TransferController extends AbstractController
+class ImportController extends AbstractController
 {
     public function __construct(private readonly Stopwatch $stopwatch) { }
 
-    #[Route('/', name: 'transfer')]
+    #[Route('/', name: 'import')]
     public function index(PlaylistRepository $playlistRepository): Response
     {
-        return $this->render('profile/transfer/index.html.twig', [
+        return $this->render('profile/import/index.html.twig', [
            'stats' => $playlistRepository->getUserStats($this->getUser()),
         ]);
     }
@@ -45,6 +45,6 @@ class TransferController extends AbstractController
 
         $this->addFlash('success', 'Success. Time: ' . $time . ' seconds');
 
-        return $this->redirectToRoute('app_transfer');
+        return $this->redirectToRoute('app_import');
     }
 }
